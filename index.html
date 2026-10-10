@@ -65,6 +65,20 @@ h3{font-size:15px;margin:14px 0 6px}
 .item .val{grid-column:2/4;font-size:14px;color:var(--sub);min-width:0}
 .item .val b{color:var(--fg)}
 .item.done{border-left:5px solid var(--ok)}
+.item.need{border-left:5px solid var(--warn);background:var(--warn-soft)}
+.item.err{border-left:5px solid var(--bad);background:var(--bad-soft)}
+.dot.r{background:var(--bad-soft);color:var(--bad)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px;color:var(--sub);margin-top:4px}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px;background:var(--line)}
+.legend .l1::before{background:var(--ok)} .legend .l2::before{background:var(--warn)} .legend .l3::before{background:var(--bad)}
+.chips button .cnt{display:inline-block;margin-left:4px;background:var(--bad);color:#fff;border-radius:9px;padding:0 6px;font-size:11px;line-height:17px}
+.tpls{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.tpls button{border:1px dashed var(--nav);background:var(--card);color:var(--nav);border-radius:16px;padding:5px 10px;font-size:13px;text-align:left;max-width:100%}
+.tplrow{display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line)}
+.tplrow:last-child{border-bottom:0}
+.tplrow .tx{flex:1;min-width:0;font-size:14px}
+.tplrow .sc{font-size:12px;color:var(--sub)}
+.tplrow button{flex:0 0 auto;border:1px solid var(--bad);color:var(--bad);background:var(--card);border-radius:8px;padding:3px 8px;font-size:13px}
 .item .flags{display:flex;gap:4px}
 .ax{display:inline-block;font-size:12px;font-weight:700;border-radius:6px;padding:1px 7px;white-space:nowrap}
 .ax.A{background:var(--ab-soft);color:var(--ab)} .ax.K{background:var(--kai-soft);color:var(--kai)} .ax.U{background:var(--umu-soft);color:var(--umu)} .ax.M,.ax.J{background:var(--med-soft);color:var(--med)}
@@ -323,6 +337,20 @@ let DB = {cases:[], cur:null};
 let storageOK = true;
 function load(){ try{ const s = localStorage.getItem(KEY); if(s) DB = JSON.parse(s); }catch(e){ storageOK=false; } }
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(DB)); storageOK=true; }catch(e){ storageOK=false; } }
+const DEF_TPL = [
+ ["","家族の話では、"],
+ ["","調査時の状況と日頃の状況が異なるため、より頻回な状況に基づき選択する。"],
+ ["","判断に迷ったため、状況を記載し審査会の判断を仰ぐ。"],
+ ["","介護者不在のため、日頃の状況は（　）から聞き取った。"],
+ ["BPSD","週（　）回程度、（　）の行動がある。その際、家族が（　）で対応している（1回（　）分程度）。"],
+ ["BPSD","介護者は特に対応していない。"],
+ ["2-2","歩行はできないが、車いすを自分で操作して移動しており、介助は行われていない。"],
+ ["2-5","排泄方法：（トイレ／ポータブル／おむつ）、頻度：昼（　）回・夜（　）回、失敗：週（　）回、昼夜の違い：（　）。"],
+ ["2-6","排泄方法：（トイレ／ポータブル／おむつ）、頻度：（　）日に1回、失敗：週（　）回、昼夜の違い：（　）。"],
+ ["M","実施頻度／継続性：（　）、実施者：（　）、必要とする理由：（　）。"]
+];
+function ensureTpl(){ if(!Array.isArray(DB.tpl)) DB.tpl = DEF_TPL.map((t,i)=>({id:"d"+i, code:t[0], text:t[1]})); }
+function tplFor(it){ return (DB.tpl||[]).filter(t=>t.code==="" || t.code===it.c || (t.code==="BPSD" && it.kind==="bpsd")); }
 function cur(){ return DB.cases.find(c=>c.id===DB.cur) || null; }
 function rec(code){ const c=cur(); if(!c) return {}; return c.r[code] || (c.r[code]={}); }
 
@@ -398,6 +426,36 @@ function issues(){
   return out;
 }
 
+function itemStates(){
+  const st={}; issues().forEach(x=>{ if(!x.code) return; if(x.lv==="bad") st[x.code]="err"; else if(x.lv==="warn" && st[x.code]!=="err") st[x.code]="need"; }); return st;
+}
+/* 概況調査メモ〔P17〜18〕 */
+const GK_FIELDS = [
+ ["place","調査実施場所","sel",["自宅内","自宅外"]],
+ ["placeName","自宅外の場合の場所（施設名は略称でも可）","txt","例：入所施設の居室"],
+ ["past","過去の認定","sel",["初回","2回目以降"]],
+ ["prev","前回の認定結果","txt","例：要介護1（有効期間12か月）"],
+ ["svc","現在受けているサービスと利用状況","area","例：通所介護 月8回、訪問介護 月12回、福祉用具貸与 2品目（車いす・手すり）"],
+ ["fac","施設・病院の利用","txt","例：なし／介護老人保健施設に入所中"],
+ ["family","家族状況","sel",["独居","同居（夫婦のみ）","同居（その他）"]],
+ ["carer","主な介護者と介護の状況","area","例：長女（別居・週3回訪問）、日中独居"],
+ ["env","居住環境","area","例：玄関に段差20cm、トイレまで手すりあり、寝室は2階"],
+ ["dev","日常的に使う機器・器械","area","例：車いす、特殊寝台、補聴器"],
+ ["other","調査の条件・その他","area","例：介護者不在のため、日頃の状況は訪問介護員から聞き取った"]
+];
+function renderGaikyo(c){
+  const gk=c.gk||{};
+  return `<h2>概況調査メモ</h2>
+   <div class="pin">氏名・住所・電話番号・被保険者番号は書かないでください。</div>
+   <div class="card">${GK_FIELDS.map(([k,l,t,o])=>{
+     const v=gk[k]||"";
+     if(t==="sel") return `<label class="f" for="gk_${k}">${l}</label><select class="s" id="gk_${k}" data-gk="${k}"><option value="">（未選択）</option>${o.map(x=>`<option ${v===x?"selected":""}>${x}</option>`).join("")}</select>`;
+     if(t==="txt") return `<label class="f" for="gk_${k}">${l}</label><input type="text" id="gk_${k}" data-gk="${k}" value="${esc(v)}" placeholder="${esc(o)}">`;
+     return `<label class="f" for="gk_${k}">${l}</label><textarea id="gk_${k}" data-gk="${k}" placeholder="${esc(o)}">${esc(v)}</textarea>`;
+   }).join("")}</div>
+   <p class="note">概況調査は参考情報です。家族状況や住環境を理由に、二次判定で要介護度を変えることはできません。手間として評価してほしいことは、各項目の特記事項に書きます〔P18〕。</p>`;
+}
+
 /* ===== 画面描画 ===== */
 function renderHeader(){
   const sel=$("#caseSel");
@@ -414,12 +472,16 @@ function renderItems(){
   const c=cur();
   if(!c) return `<p>調査がありません。「準備・管理」から作成してください。</p>`;
   let h = c.sample? `<div class="sample">見本の調査「${esc(c.id)}」を表示しています。${esc(c.memo)}</div>`:"";
-  h += `<div class="chips" role="toolbar">${GROUPS.map(([k,l])=>{ const its=ALL.filter(x=>x.g===k); const d=its.filter(x=>done(x,c.r[x.c]||{})).length; return `<button data-gf="${k}" aria-pressed="${GF===k}">${l} ${d}/${its.length}</button>`;}).join("")}</div>`;
+  const st = itemStates();
+  const gk = c.gk||{}; const gkN = GK_FIELDS.filter(f=>gk[f[0]]).length;
+  h += `<div class="chips" role="toolbar"><button data-gf="G" aria-pressed="${GF==="G"}">概況 ${gkN}/${GK_FIELDS.length}</button>${GROUPS.map(([k,l])=>{ const its=ALL.filter(x=>x.g===k); const d=its.filter(x=>done(x,c.r[x.c]||{})).length; const bad=its.filter(x=>st[x.c]==="err"||st[x.c]==="need").length; return `<button data-gf="${k}" aria-pressed="${GF===k}">${l} ${d}/${its.length}${bad?`<span class="cnt">${bad}</span>`:""}</button>`;}).join("")}</div>`;
+  if(GF==="G") return h + renderGaikyo(c);
+  h += `<div class="legend"><span>未選択</span><span class="l1">入力済み</span><span class="l2">特記などが未記入</span><span class="l3">要確認（矛盾・漏れ）</span></div>`;
   h += `<div class="list">`;
   ALL.filter(x=>x.g===GF).forEach(it=>{
-    const r=c.r[it.c]||{}; const vt=valText(it,r);
-    const fl = [r.tok?`<span class="dot">特記</span>`:"", r.freqUsed?`<span class="dot w">頻回</span>`:"", r.inapp?`<span class="dot w">不適切</span>`:""].join("");
-    h += `<button class="item ${done(it,r)?"done":""}" data-open="${it.c}"><span class="code">${it.c.startsWith("J")||it.c==="M"?"":it.c}</span><span class="nm">${esc(it.n)}</span><span class="ax ${it.ax}">${AXN[it.ax]}</span><span class="val">${vt?`<b>${esc(vt)}</b>`:"未選択"} <span class="flags">${fl}</span></span></button>`;
+    const r=c.r[it.c]||{}; const vt=valText(it,r); const s=st[it.c];
+    const fl = [s==="err"?`<span class="dot r">要確認</span>`:"", s==="need"?`<span class="dot w">特記未記入</span>`:"", r.tok?`<span class="dot">特記</span>`:"", r.memo?`<span class="dot">メモ</span>`:"", r.freqUsed?`<span class="dot w">頻回</span>`:"", r.inapp?`<span class="dot w">不適切</span>`:""].join("");
+    h += `<button class="item ${s==="err"?"err":s==="need"?"need":done(it,r)?"done":""}" data-open="${it.c}"><span class="code">${it.c.startsWith("J")||it.c==="M"?"":it.c}</span><span class="nm">${esc(it.n)}</span><span class="ax ${it.ax}">${AXN[it.ax]}</span><span class="val">${vt?`<b>${esc(vt)}</b>`:"未選択"} <span class="flags">${fl}</span></span></button>`;
   });
   return h+`</div>`;
 }
@@ -471,7 +533,9 @@ function helperHTML(it, r){
 
 function tokHTML(it, r){
   const t=r.tok||""; const vg=vagueIn(t);
-  return `<h3>特記事項</h3>
+  return `<h3>聞き取りメモ</h3>
+    <textarea id="memo" placeholder="聞き取った内容をそのまま残す欄です（転記用まとめには入りません）。あとで特記事項に整えます。">${esc(r.memo||"")}</textarea>
+    <h3>特記事項</h3>
     <div class="g2"><div><label class="f" for="tkS">状況（実際の様子・日頃と調査時）</label><textarea id="tkS" placeholder="例：調査時はベッド柵につかまれば起き上がれた。家族の話では、日頃は倦怠感が強い">${esc(r.s||"")}</textarea></div>
     <div><label class="f" for="tkC">手間（誰が・何を・どれくらい）</label><textarea id="tkC" placeholder="例：家族が夜間2回起きて体を支えている">${esc(r.care||"")}</textarea></div></div>
     <div class="g2"><div><label class="f" for="tkF">頻度（数で）</label><input type="text" id="tkF" placeholder="例：週5日程度／1日2回" value="${esc(r.f||"")}"></div>
@@ -479,6 +543,13 @@ function tokHTML(it, r){
     <div class="row" style="margin-top:10px"><button class="btn o" data-act="draft">下書きを作る</button><button class="btn o" data-act="copytok">特記をコピー</button></div>
     <label class="f" for="tok">特記事項（このまま転記できる文章）</label>
     <textarea id="tok" style="min-height:8em">${esc(t)}</textarea>
+    <div class="note" style="margin-top:6px">定型文（タップで特記事項のカーソル位置に入ります。（　）は書き換えてください）</div>
+    <div class="tpls">${tplFor(it).map(x=>`<button data-tpl="${esc(x.id)}">${esc(x.text)}</button>`).join("") || `<span class="note">登録された定型文はありません</span>`}</div>
+    <details><summary>定型文を登録する</summary><div class="bd">
+      <label class="f" for="tplNew">登録する文</label><textarea id="tplNew" style="min-height:4em" placeholder="例：家族が夜間2回起きて介助している。"></textarea>
+      <div class="row" style="margin-top:8px"><button class="btn o" data-act="tplFromTok">特記事項の文をここに写す</button></div>
+      <div class="row" style="margin-top:8px"><button class="btn" data-act="tplAddItem">この項目（${esc(it.c.startsWith("J")||it.c==="M"?it.n:it.c)}）用に登録</button><button class="btn o" data-act="tplAddAll">全項目共通で登録</button></div>
+      <p class="note">登録した定型文は「準備・管理」で一覧・削除できます。</p></div></details>
     ${vg.length?`<div class="warnbox">「${vg.join("・")}」は人によって受け取り方が違う言葉です。「週2回」のように数で書いてください〔P19〕。</div>`:""}
     <p class="note">型：状況 → 頻度 → 選択（「番号.選択肢」を選択する）→ 一次判定に表れない手間。状態ではなく手間を書く〔P2〕。迷った理由も書く〔P8〕。</p>`;
 }
@@ -532,6 +603,7 @@ function renderCheck(){
 
 function summaryText(c){
   const L=[]; L.push(`調査番号：${c.id}　調査日：${c.date||""}`); L.push("");
+  const gk=c.gk||{}; if(GK_FIELDS.some(f=>gk[f[0]])){ L.push("■概況調査"); GK_FIELDS.forEach(([k,l])=>{ if(gk[k]) L.push(`${l}：${gk[k]}`); }); L.push(""); }
   GROUPS.forEach(([g,l])=>{
     L.push(`■${l}`);
     ALL.filter(x=>x.g===g).forEach(it=>{ const r=c.r[it.c]||{}; L.push(`${it.c.startsWith("J")||it.c==="M"?"":it.c+" "}${it.n}：${valText(it,r)||"（未選択）"}`); });
@@ -545,9 +617,12 @@ function summaryText(c){
 function renderOut(){
   const c=cur(); if(!c) return `<p>調査がありません。</p>`;
   const txt=summaryText(c);
+  const memos = ALL.map(it=>[it,(c.r[it.c]||{}).memo]).filter(x=>x[1]).map(([it,m])=>`（${it.c.startsWith("J")||it.c==="M"?it.n:it.c}）${m}`).join("\n");
   return `<h2>転記用まとめ</h2><p class="note">市町村の調査票に転記するための一覧です。氏名は入れていません。</p>
     <div class="row"><button class="btn" data-act="copysum">まとめをコピー</button></div>
-    <pre class="out" id="sumOut" tabindex="0">${esc(txt)}</pre>`;
+    <pre class="out" id="sumOut" tabindex="0">${esc(txt)}</pre>
+    <h2>聞き取りメモ一覧</h2><p class="note">特記事項を整えるときの見直し用です（転記用まとめには入りません）。</p>
+    ${memos?`<div class="row"><button class="btn o" data-act="copymemo">メモをコピー</button></div><pre class="out" id="memoOut" tabindex="0">${esc(memos)}</pre>`:`<div class="card note">メモはまだありません。各項目の「聞き取りメモ」に書くと、ここに集まります。</div>`}`;
 }
 
 function renderPrep(){
@@ -562,6 +637,14 @@ function renderPrep(){
     <div class="row" style="margin-top:10px"><button class="btn" data-act="newcase">作成する</button></div></div>
   ${c?`<div class="card"><b>選択中：${esc(c.id)}</b><label class="f" for="curDate">調査日</label><input type="date" id="curDate" value="${esc(c.date||"")}">
     <div class="row" style="margin-top:10px"><button class="btn d" data-act="delcase">この調査を削除</button></div></div>`:""}
+  <h2>定型文</h2>
+  <p class="note">特記事項に差し込める文です。項目の画面からも登録できます。「BPSD」は第4群などの行動の項目すべてに出ます。</p>
+  <div class="card">
+    ${(DB.tpl||[]).map(t=>`<div class="tplrow"><div class="tx"><div class="sc">${t.code===""?"全項目共通":t.code==="BPSD"?"BPSD関連の項目":t.code==="M"?"特別な医療":t.code==="J1"||t.code==="J2"?"自立度":t.code}</div>${esc(t.text)}</div><button data-tpldel="${esc(t.id)}">削除</button></div>`).join("") || `<p class="note">定型文はありません。</p>`}
+    <label class="f" for="tplNewP">新しい定型文</label><textarea id="tplNewP" style="min-height:4em"></textarea>
+    <label class="f" for="tplCodeP">使う項目</label><select class="s" id="tplCodeP"><option value="">全項目共通</option><option value="BPSD">BPSD関連の項目</option>${ALL.map(it=>`<option value="${it.c}">${it.c.startsWith("J")||it.c==="M"?"":it.c+" "}${esc(it.n)}</option>`).join("")}</select>
+    <div class="row" style="margin-top:8px"><button class="btn" data-act="tplAddP">登録する</button><button class="btn o" data-act="tplReset">最初の定型文に戻す</button></div>
+  </div>
   <h2>バックアップ</h2>
   <p class="note">ブラウザのデータ消去や機種変更で消えることがあります。下の文字をコピーして安全な場所に保存し、戻すときは貼り付けて「読み込む」を押します。ファイルからも読み込めます。</p>
   <div class="row"><button class="btn o" data-act="copyjson">バックアップをコピー</button></div>
@@ -579,9 +662,9 @@ function render(){
 }
 
 /* ===== 操作 ===== */
-function confirmBox(msg, ok){
+function confirmBox(msg, ok, label){
   const d=document.createElement("div"); d.className="modal";
-  d.innerHTML=`<div class="box"><p style="margin-top:0">${esc(msg)}</p><div class="row"><button class="btn d" data-y>削除する</button><button class="btn o" data-n>やめる</button></div></div>`;
+  d.innerHTML=`<div class="box"><p style="margin-top:0">${esc(msg)}</p><div class="row"><button class="btn d" data-y>${esc(label||"削除する")}</button><button class="btn o" data-n>やめる</button></div></div>`;
   document.body.appendChild(d);
   d.querySelector("[data-y]").onclick=()=>{d.remove();ok();}; d.querySelector("[data-n]").onclick=()=>d.remove();
 }
@@ -598,6 +681,19 @@ function bindSheet(s, it){
       save(); renderHeader(); refreshSheet(); return;
     }
     if(b.dataset.med!=null){ const i=+b.dataset.med; let v=r.v||[]; v=v.includes(i)?v.filter(x=>x!==i):v.concat(i).sort((a,b)=>a-b); r.v=v; r.medDone=true; save(); renderHeader(); refreshSheet(); return; }
+    if(b.dataset.tpl){
+      const tp=(DB.tpl||[]).find(x=>x.id===b.dataset.tpl); if(!tp) return;
+      const ta=s.querySelector("#tok"); const v=ta.value; const p=(typeof ta.selectionStart==="number")?ta.selectionStart:v.length;
+      ta.value=v.slice(0,p)+tp.text+v.slice(p); readTok(s,r); save(); renderHeader(); refreshSheet();
+      const n=$(".sheet #tok"); if(n){ n.focus(); const q=p+tp.text.length; try{ n.setSelectionRange(q,q); }catch(e){} }
+      return;
+    }
+    if(b.dataset.act==="tplFromTok"){ const ta=s.querySelector("#tok"); const nb=s.querySelector("#tplNew"); nb.value=ta.value; nb.focus(); return; }
+    if(b.dataset.act==="tplAddItem" || b.dataset.act==="tplAddAll"){
+      const txt=s.querySelector("#tplNew").value.trim(); if(!txt){ toast("登録する文を入れてください"); return; }
+      DB.tpl=DB.tpl||[]; DB.tpl.push({id:"u"+Date.now(), code:b.dataset.act==="tplAddAll"?"":it.c, text:txt});
+      readTok(s,r); save(); refreshSheet(); toast("定型文を登録しました"); return;
+    }
     if(b.dataset.trial){ r.trial = r.trial===b.dataset.trial?null:b.dataset.trial; if(r.trial==="diff" && !r.why) r.why="より頻回な状況から"; if(r.trial==="diff"||r.trial==="same"||r.trial==="no") {} save(); refreshSheet(); return; }
     const a=b.dataset.act;
     if(a==="close"){ OPEN=null; render(); return; }
@@ -643,6 +739,7 @@ function bindSheet(s, it){
   });
   s.addEventListener("input", e=>{
     const x=e.target;
+    if(x.id==="memo"){ r.memo=x.value; save(); return; }
     if(["tkS","tkC","tkF","tkR","tok"].includes(x.id)){ readTok(s,r); save(); renderHeader(); if(x.id==="tok"){ const w=s.querySelector(".warnbox.vg"); } return; }
     if(x.dataset.md!=null){ const i=x.dataset.md; r.det=r.det||{}; r.det[i]=r.det[i]||{}; r.det[i][x.dataset.k]=x.value; save(); renderHeader(); return; }
   });
@@ -661,7 +758,11 @@ document.addEventListener("click", e=>{
   if(b.dataset.tab){ TAB=b.dataset.tab; OPEN=null; render(); window.scrollTo(0,0); try{localStorage.setItem(KEY+".tab",TAB);}catch(e){} return; }
   if(b.dataset.gf){ GF=b.dataset.gf; render(); return; }
   if(b.dataset.open){ OPEN=b.dataset.open; GF=BYC[OPEN].g; render(); return; }
+  if(b.dataset.tpldel){ DB.tpl=(DB.tpl||[]).filter(t=>t.id!==b.dataset.tpldel); save(); render(); toast("削除しました"); return; }
   const a=b.dataset.act;
+  if(a==="tplAddP"){ const t=$("#tplNewP").value.trim(); if(!t){ toast("登録する文を入れてください"); return; } DB.tpl=DB.tpl||[]; DB.tpl.push({id:"u"+Date.now(), code:$("#tplCodeP").value, text:t}); save(); render(); toast("定型文を登録しました"); return; }
+  if(a==="tplReset"){ confirmBox("定型文を最初の状態に戻します。自分で登録した定型文は消えます。", ()=>{ DB.tpl=null; ensureTpl(); save(); render(); toast("最初の定型文に戻しました"); }, "戻す"); return; }
+  if(a==="copymemo"){ copy($("#memoOut").textContent, null); return; }
   if(a==="newcase"){
     const id=$("#newId").value.trim(); const dt=$("#newDate").value;
     if(!id){ toast("番号を入れてください"); return; }
@@ -682,15 +783,21 @@ document.addEventListener("change", e=>{
   if(x.id==="curDate"){ const c=cur(); c.date=x.value; save(); renderHeader(); return; }
   if(x.id==="jsonFile" && x.files[0]){ const fr=new FileReader(); fr.onload=()=>importText(fr.result); fr.readAsText(x.files[0]); }
 });
+document.addEventListener("input", e=>{
+  const x=e.target; if(x.closest(".sheet")) return;
+  if(x.dataset.gk){ const c=cur(); if(!c) return; c.gk=c.gk||{}; c.gk[x.dataset.gk]=x.value; save(); }
+});
 function importText(t){
   try{ const d=JSON.parse(t); if(!d||!Array.isArray(d.cases)) throw 0;
     d.cases.forEach(c=>{ const i=DB.cases.findIndex(x=>x.id===c.id); if(i>=0) DB.cases[i]=c; else DB.cases.push(c); });
+    if(Array.isArray(d.tpl)){ ensureTpl(); d.tpl.forEach(t=>{ if(!DB.tpl.some(x=>x.id===t.id||x.text===t.text)) DB.tpl.push(t); }); }
     DB.cur=d.cur||DB.cur||(DB.cases[0]&&DB.cases[0].id); save(); render(); toast(`${d.cases.length}件を読み込みました`);
   }catch(e){ toast("読み込めませんでした。バックアップの文字をそのまま貼り付けてください"); }
 }
 
 /* ===== 起動 ===== */
 load();
+ensureTpl();
 if(!DB.cases.length){ DB.cases=[sampleCase()]; DB.cur="例-001"; }
 if(!DB.cur && DB.cases[0]) DB.cur=DB.cases[0].id;
 try{ const t=localStorage.getItem(KEY+".tab"); if(t) TAB=t; }catch(e){}
