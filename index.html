@@ -683,9 +683,9 @@ function bindSheet(s, it){
     if(b.dataset.med!=null){ const i=+b.dataset.med; let v=r.v||[]; v=v.includes(i)?v.filter(x=>x!==i):v.concat(i).sort((a,b)=>a-b); r.v=v; r.medDone=true; save(); renderHeader(); refreshSheet(); return; }
     if(b.dataset.tpl){
       const tp=(DB.tpl||[]).find(x=>x.id===b.dataset.tpl); if(!tp) return;
-      const ta=s.querySelector("#tok"); const v=ta.value; const p=(typeof ta.selectionStart==="number")?ta.selectionStart:v.length;
+      const ta=s.querySelector("#tok"); const v=ta.value; const p=(typeof CARET==="number" && CARET<=v.length)?CARET:v.length;
       ta.value=v.slice(0,p)+tp.text+v.slice(p); readTok(s,r); save(); renderHeader(); refreshSheet();
-      const n=$(".sheet #tok"); if(n){ n.focus(); const q=p+tp.text.length; try{ n.setSelectionRange(q,q); }catch(e){} }
+      const n=$(".sheet #tok"); const q=p+tp.text.length; CARET=q; if(n){ n.focus(); try{ n.setSelectionRange(q,q); }catch(e){} }
       return;
     }
     if(b.dataset.act==="tplFromTok"){ const ta=s.querySelector("#tok"); const nb=s.querySelector("#tplNew"); nb.value=ta.value; nb.focus(); return; }
@@ -696,8 +696,8 @@ function bindSheet(s, it){
     }
     if(b.dataset.trial){ r.trial = r.trial===b.dataset.trial?null:b.dataset.trial; if(r.trial==="diff" && !r.why) r.why="より頻回な状況から"; if(r.trial==="diff"||r.trial==="same"||r.trial==="no") {} save(); refreshSheet(); return; }
     const a=b.dataset.act;
-    if(a==="close"){ OPEN=null; render(); return; }
-    if(a==="prev"||a==="next"){ const i=ALL.findIndex(x=>x.c===it.c); const n=ALL[i+(a==="next"?1:-1)]; if(n){ OPEN=n.c; GF=n.g; render(); } return; }
+    if(a==="close"){ OPEN=null; CARET=null; render(); return; }
+    if(a==="prev"||a==="next"){ const i=ALL.findIndex(x=>x.c===it.c); const n=ALL[i+(a==="next"?1:-1)]; if(n){ OPEN=n.c; GF=n.g; CARET=null; render(); } return; }
     if(a==="freq"){
       const cs=choicesOf(it); const f={}; let tot=0;
       s.querySelectorAll("[data-fq]").forEach(x=>{ const n=parseInt(x.value,10); if(!isNaN(n)&&n>0){ f[x.dataset.fq]=n; tot+=n; } });
@@ -750,6 +750,8 @@ function bindSheet(s, it){
     if(x.id==="tok"){ refreshSheet(); }
   });
 }
+let CARET=null; /* 特記事項欄で最後にカーソルがあった位置（未操作なら末尾に追加） */
+["keyup","click","select","input"].forEach(ev=>document.addEventListener(ev, e=>{ if(e.target && e.target.id==="tok") CARET=e.target.selectionStart; }));
 function readTok(s,r){ const g=id=>{const e=s.querySelector("#"+id); return e?e.value:undefined;}; r.s=g("tkS")??r.s; r.care=g("tkC")??r.care; r.f=g("tkF")??r.f; r.why=g("tkR")??r.why; const t=g("tok"); if(t!==undefined) r.tok=t; }
 function refreshSheet(){ const s=$(".sheet"); const y=s?s.scrollTop:0; const ae=document.activeElement&&document.activeElement.id; renderSheet(); const n=$(".sheet"); if(n){ n.scrollTop=y; if(ae){ const el=n.querySelector("#"+ae); if(el&&el.tagName!=="BUTTON") el.focus(); } } }
 
