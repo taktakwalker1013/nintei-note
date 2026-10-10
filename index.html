@@ -1,0 +1,701 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1f4a73">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="調査ノート">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}</style>
+<title>認定調査ノート</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap">
+<style>
+/* Layout: phone-first single column; sticky header, list → full-screen item sheet, fixed bottom tab bar */
+:root{
+  --bg:#f3f5f7; --card:#ffffff; --fg:#1e2731; --sub:#5d6875; --line:#d9dee4;
+  --nav:#1f4a73; --nav-soft:#e6eef6;
+  --ab:#2563a8; --ab-soft:#e6eef9; --kai:#2a7a4c; --kai-soft:#e4f3ea; --umu:#bf5d17; --umu-soft:#fcefe3;
+  --med:#7a4bb0; --med-soft:#f0e9f8;
+  --ok:#2a7a4c; --warn:#a86400; --warn-soft:#fff4dd; --bad:#b83a2e; --bad-soft:#fbe9e7;
+  --font:"BIZ UDPGothic","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12171d; --card:#1b222a; --fg:#e6ebf0; --sub:#9aa6b2; --line:#2e3843;
+  --nav:#8db8e3; --nav-soft:#1f2c3a;
+  --ab:#7fb0ee; --ab-soft:#1d2a3b; --kai:#71c793; --kai-soft:#1a2d22; --umu:#f0a066; --umu-soft:#33241a;
+  --med:#c3a1ec; --med-soft:#2a2236;
+  --ok:#71c793; --warn:#f0bd5e; --warn-soft:#332a17; --bad:#f08a7e; --bad-soft:#3a1f1c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12171d; --card:#1b222a; --fg:#e6ebf0; --sub:#9aa6b2; --line:#2e3843;
+  --nav:#8db8e3; --nav-soft:#1f2c3a;
+  --ab:#7fb0ee; --ab-soft:#1d2a3b; --kai:#71c793; --kai-soft:#1a2d22; --umu:#f0a066; --umu-soft:#33241a;
+  --med:#c3a1ec; --med-soft:#2a2236;
+  --ok:#71c793; --warn:#f0bd5e; --warn-soft:#332a17; --bad:#f08a7e; --bad-soft:#3a1f1c; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:16px;line-height:1.6;margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--nav);outline-offset:2px}
+.wrap{max-width:720px;margin:0 auto;padding-inline:16px;padding-block:0 96px}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:10px 16px 8px;border-bottom:1px solid var(--line)}
+.top .row{display:flex;align-items:center;gap:8px;max-width:720px;margin:0 auto}
+.top h1{font-size:17px;margin:0;flex:0 0 auto;color:var(--nav);letter-spacing:.02em}
+.top select{flex:1;min-width:0;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+.prog{max-width:720px;margin:6px auto 0;height:6px;background:var(--line);border-radius:4px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--nav);width:0}
+.progtxt{max-width:720px;margin:2px auto 0;font-size:12px;color:var(--sub)}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--card);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav.tabs button{border:0;background:none;padding:10px 4px 12px;font-size:13px;color:var(--sub);display:flex;flex-direction:column;align-items:center;gap:2px}
+nav.tabs button b{font-size:15px}
+nav.tabs button[aria-selected="true"]{color:var(--nav);font-weight:700;box-shadow:inset 0 3px 0 var(--nav)}
+.badge{position:relative}
+.badge[data-n]:not([data-n="0"])::after{content:attr(data-n);position:absolute;top:4px;right:22%;background:var(--bad);color:#fff;font-size:11px;border-radius:9px;padding:0 6px;line-height:18px}
+h2{font-size:18px;margin:18px 0 8px;text-wrap:balance}
+h3{font-size:15px;margin:14px 0 6px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:10px 0 4px;scrollbar-width:none}
+.chips button{flex:0 0 auto;border:1px solid var(--line);background:var(--card);border-radius:20px;padding:6px 12px;font-size:14px;white-space:nowrap}
+.chips button[aria-pressed="true"]{background:var(--nav);border-color:var(--nav);color:var(--card)}
+.list{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.item{display:grid;grid-template-columns:3.4em 1fr auto;gap:4px 10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-align:left;width:100%}
+.item .code{font-variant-numeric:tabular-nums;font-weight:700;color:var(--sub);font-size:14px}
+.item .nm{font-weight:700;min-width:0}
+.item .val{grid-column:2/4;font-size:14px;color:var(--sub);min-width:0}
+.item .val b{color:var(--fg)}
+.item.done{border-left:5px solid var(--ok)}
+.item .flags{display:flex;gap:4px}
+.ax{display:inline-block;font-size:12px;font-weight:700;border-radius:6px;padding:1px 7px;white-space:nowrap}
+.ax.A{background:var(--ab-soft);color:var(--ab)} .ax.K{background:var(--kai-soft);color:var(--kai)} .ax.U{background:var(--umu-soft);color:var(--umu)} .ax.M,.ax.J{background:var(--med-soft);color:var(--med)}
+.dot{font-size:11px;border-radius:5px;padding:0 5px;background:var(--nav-soft);color:var(--nav);font-weight:700}
+.dot.w{background:var(--warn-soft);color:var(--warn)}
+/* item sheet */
+.sheet{position:fixed;inset:0;z-index:10;background:var(--bg);overflow-y:auto;padding-top:env(safe-area-inset-top,0px)}
+.sheet .bar{position:sticky;top:0;z-index:2;background:var(--bg);display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--line)}
+.sheet .bar button{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:6px 12px}
+.sheet .bar .t{flex:1;min-width:0;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sheet .in{max-width:720px;margin:0 auto;padding-inline:16px;padding-block:12px 120px}
+.meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;color:var(--sub)}
+.def{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:10px;font-size:15px}
+.choices{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.choices button{text-align:left;border:2px solid var(--line);background:var(--card);border-radius:12px;padding:12px 14px;font-size:16px;display:flex;gap:10px;align-items:flex-start}
+.choices button .no{font-variant-numeric:tabular-nums;font-weight:700;color:var(--sub);min-width:1.4em}
+.choices button[aria-pressed="true"]{border-color:var(--nav);background:var(--nav-soft);font-weight:700}
+.choices button[aria-pressed="true"] .no{color:var(--nav)}
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-top:10px}
+details>summary{padding:11px 12px;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:8px}
+details>summary::-webkit-details-marker{display:none}
+details>summary::after{content:"＋";color:var(--sub)}
+details[open]>summary::after{content:"－"}
+details .bd{padding:0 12px 12px}
+ul.tips{margin:0;padding-left:1.2em}
+ul.tips li{margin:4px 0}
+label.f{display:block;font-size:13px;color:var(--sub);margin:10px 0 4px}
+input[type=text],input[type=number],input[type=date],select.s,textarea{width:100%;border:1px solid var(--line);border-radius:10px;background:var(--card);padding:9px 10px;font-size:16px}
+textarea{min-height:5.5em;resize:vertical}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.btn{border:1px solid var(--nav);background:var(--nav);color:var(--card);border-radius:10px;padding:9px 14px;font-weight:700}
+.btn.o{background:var(--card);color:var(--nav)}
+.btn.d{background:var(--card);color:var(--bad);border-color:var(--bad)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.res{margin-top:8px;padding:10px 12px;border-radius:10px;background:var(--nav-soft);font-size:15px}
+.note{font-size:13px;color:var(--sub)}
+.warnbox{background:var(--warn-soft);color:var(--fg);border-left:4px solid var(--warn);padding:8px 12px;border-radius:8px;font-size:14px;margin-top:8px}
+.chk{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--line)}
+.chk:last-child{border-bottom:0}
+.chk input{width:22px;height:22px;flex:0 0 auto;margin-top:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:10px}
+.issue{display:flex;gap:10px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--warn);border-radius:10px;padding:10px 12px;margin-top:6px;width:100%;text-align:left}
+.issue.bad{border-left-color:var(--bad)} .issue.info{border-left-color:var(--nav)}
+.issue .k{font-size:12px;font-weight:700;white-space:nowrap}
+.issue.bad .k{color:var(--bad)} .issue .k{color:var(--warn)} .issue.info .k{color:var(--nav)}
+pre.out{white-space:pre-wrap;word-break:break-all;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;font-size:14px;font-family:var(--font);max-height:60vh;overflow:auto}
+.sample{background:var(--warn-soft);border:1px dashed var(--warn);border-radius:10px;padding:8px 12px;font-size:13px;margin-top:10px}
+.pin{background:var(--bad-soft);border-radius:10px;padding:10px 12px;font-size:14px;margin-top:10px}
+.modal{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center}
+.modal .box{background:var(--card);width:100%;max-width:720px;border-radius:16px 16px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px))}
+.toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:8px 16px;border-radius:20px;font-size:14px;z-index:30}
+@media (prefers-reduced-motion:no-preference){.sheet{animation:up .18s ease-out}@keyframes up{from{transform:translateY(12px);opacity:.6}}}
+</style></head><body>
+
+<header class="top">
+  <div class="row">
+    <h1>認定調査ノート</h1>
+    <select id="caseSel" aria-label="調査を選ぶ"></select>
+  </div>
+  <div class="prog"><i id="progBar"></i></div>
+  <div class="progtxt" id="progTxt"></div>
+</header>
+
+<main class="wrap" id="main"></main>
+
+<nav class="tabs" role="tablist">
+  <button role="tab" data-tab="items" aria-selected="true"><b>☰</b>項目</button>
+  <button role="tab" data-tab="check" class="badge" id="tabCheck"><b>✓</b>チェック</button>
+  <button role="tab" data-tab="out"><b>⎘</b>まとめ</button>
+  <button role="tab" data-tab="prep"><b>⚙</b>準備・管理</button>
+</nav>
+
+<script>
+"use strict";
+/* ===== 調査項目マスタ（根拠：認定調査員テキスト2009 令和6年4月改訂版） ===== */
+const CH = {
+  A3:["つかまらないでできる","何かにつかまればできる","できない"],
+  S3:["支えなしでできる","何か支えがあればできる","できない"],
+  ZA:["できる","自分の手で支えればできる","支えてもらえればできる","できない"],
+  K4:["介助されていない","見守り等","一部介助","全介助"],
+  K3:["介助されていない","一部介助","全介助"],
+  SN:["介助されていない","一部介助","全介助","行っていない"],
+  SI:["普通（日常生活に支障がない）","約1m離れた視力確認表の図が見える","目の前に置いた視力確認表の図が見える","ほとんど見えない","見えているのか判断不能"],
+  CH:["普通","普通の声がやっと聞き取れる","かなり大きな声なら何とか聞き取れる","ほとんど聞こえない","聞こえているのか判断不能"],
+  EN:["できる","見守り等","できない"],
+  GA:["週1回以上","月1回以上","月1回未満"],
+  IS:["調査対象者が意思を他者に伝達できる","ときどき伝達できる","ほとんど伝達できない","できない"],
+  YN:["できる","できない"],
+  BP:["ない","ときどきある","ある"],
+  KE:["できる（特別な場合でもできる）","特別な場合を除いてできる","日常的に困難","できない"],
+  SH:["自立","J1","J2","A1","A2","B1","B2","C1","C2"],
+  NI:["自立","Ⅰ","Ⅱa","Ⅱb","Ⅲa","Ⅲb","Ⅳ","M"]
+};
+/* [コード, 名称, 軸, 選択肢キー, 期間, 定義, つまずき[], 種別] 種別: multi=部位の複数選択 bpsd=頻度判定 */
+const ITEMS = [
+ ["1-1","麻痺等の有無","U","MAHI","過去1週間","筋肉の随意的な運動機能の低下・消失。上肢＝座位で肘を伸ばし腕を前方と横に肩の高さまで挙げて静止できるか（円背はあごの高さ）。下肢＝座位で膝を伸ばし下腿を水平に挙げて静止できるか。〔P31〜35〕",["前方か横のどちらか一方でもできなければ「あり」","冷感・しびれ等の感覚障害だけでは含まない","筋力低下・意識障害・パーキンソン病等で動作できなければ含む","欠損や上下肢以外の麻痺は「その他」を選び、部位を必ず特記","軽い可動域制限は動く範囲で確認動作を行う","同意を得てゆっくり。痛みを訴えたら中止","主治医意見書とは基準が違う"],"multi"],
+ ["1-2","拘縮の有無","U","KOU","過去1週間","他動的に動かしたとき関節の動く範囲が著しく狭い。肩＝前方または横に肩の高さまで／股＝屈曲90度程度または外転25cm程度（拳2個分）／膝＝90度程度曲がるか。〔P36〜40〕",["自分で動かせないが他動なら動く→拘縮ではない（ない）","左右どちらかに制限があれば「あり」","疼痛による制限も含む","定義の範囲外の支障は「ない」を選び特記","腰椎・頚椎等は「その他」で部位を特記","本人か家族の同意を得て、4〜5秒かけてゆっくり"],"multi"],
+ ["1-3","寝返り","A","A3","過去1週間","横たわったまま左右どちらかに向きを変え、安定した状態になる。片側だけ・不完全な横向きでよい。ふとんはかけない。〔P41〕",["膝の裏・寝巻きなど自分の体をつかむ→2","声かけで自力でできれば1","上半身だけでも向きが変われば1","起き上がってから向きを変えるのは寝返りではない","ベッド柵に紐をつけてつかまる→2"]],
+ ["1-4","起き上がり","A","A3","過去1週間","ふとんをかけずに寝た状態から上半身を起こす。経路は問わない（うつ伏せ経由も可）。〔P43〕",["習慣的に手や肘をつくだけ（支えにしていない）→1","支えにして加重・自分の体をつかむ→2","途中まででも最後に介助が要れば3","ギャッチアップ機能は使わない状態で評価（常時ギャッチアップならその状態から・特記）","家族が介助していても能力で選ぶ"]],
+ ["1-5","座位保持","A","ZA","過去1週間","背もたれなしで10分間程度座位を保つ。座り方（長座位・端座位）は問わない。〔P45〕",["背もたれ・クッションに寄りかかれば保てる→3（4ではない）","車いすの背を支えにしていなければ1","普段ソファーにもたれているかは関係ない（背もたれなしで座れる能力）","4＝背もたれがあっても保てない（長期の水平体位・医学的理由・体幹屈曲不可）","畳の生活なら待合室・トイレ等の状況で"]],
+ ["1-6","両足での立位保持","A","S3","過去1週間","立ち上がった後、平らな床で10秒間程度立位を保つ。立ち上がるまでは含まない。〔P48〕",["介護者が支えれば立てる→3","膝に手を置く・肘掛けに加重→2","片足しかつかない人は片足での状況で","調査時できても日頃できないことが多い→より頻回な状況で"]],
+ ["1-7","歩行","A","A3","過去1週間","立った状態から、立ち止まらず座り込まずに5m程度歩く。歩幅・速度・目的は問わない。〔P50〕",["2〜3mしか歩けない・途中で座り込む→3","杖・歩行器・壁・自分の膝に手を置く→2","迷うので手を引く（体は支えていない）→1","方向確認だけの杖→1","医療上の歩行制限・リハビリの平行棒だけ→3","両足切断で手で移動→3","出迎え等で確認できれば試行不要（聞き取りは必要）"]],
+ ["1-8","立ち上がり","A","A3","過去1週間","いす・ベッド・車いす等に膝がほぼ直角の状態で座り、立ち上がる。床からは含まない。〔P53〕",["膝に手をつく・座面を押して加重→2","支えがあれば自分で立てる→2、介護者が引き上げる→3","畳の生活ならトイレ・待合室の状況で"]],
+ ["1-9","片足での立位","A","S3","過去1週間","平らな床で、自分で左右どちらかの片足を上げたまま1秒間程度立位を保つ。〔P55〕",["立ち上がるまでの介助は問わない","介護者に支えられないと上げられない→3"]],
+ ["1-10","洗身","K","SN","過去1週間","浴室内でスポンジや手拭いに石鹸等をつけて全身を洗う。洗髪・浴槽の出入りは含まない。〔P57〕",["3択（見守り等なし）。見守りは2.一部介助","本人が洗った所も含め介護者がすべて洗い直す→3","清拭のみ→4.行っていない","入浴が週3回で3回とも全介助→3（入浴のない日は数えない）"]],
+ ["1-11","つめ切り","K","K3","過去1か月","つめ切りの準備・切る・切ったつめを捨てる。切った場所の掃除は含まない。〔P60〕",["期間は過去1か月","自助具で自力→1","片手だけ・足だけ介助、見守り・確認→2","全指切断などつめがない→四肢の清拭で代替"]],
+ ["1-12","視力","A","SI","過去1週間","視力確認表を本人の正面に置いて見えるか。見たものの理解は問わない。〔P63〕",["視野欠損があっても確認表は正面に","眼鏡・コンタクトは使った状態で","十分な明るさを確保","身振りで反応が分かれば判断不能ではない"]],
+ ["1-13","聴力","A","CH","過去1週間","会話・耳元の大きな声・物音への反応で、聞こえるか。聞いた内容の理解は問わない。〔P67〕",["補聴器は使った状態で","失語症・構音障害があっても「聞こえるか」で","会話は通じないが耳元の物音に身振りで反応→3（判断不能ではない）"]],
+ ["2-1","移乗","K","K4","過去1週間","でん部を移動させて、いす等へ乗り移る。体位交換・シーツ交換ででん部を動かす行為も含む。〔P70〕",["確認・指示・声かけ、体に触れず車いすを差し入れる→2","手を添える・体を支える→3、抱える・運ぶ→4","畳で両手をついて腰を浮かせるだけは移乗ではない","義足・装具の準備は含まない","能力があるのに介助＝常に不適切、ではない"]],
+ ["2-2","移動","K","K4","過去1週間","日常生活で必要な場所（食事・排泄・入浴等）への移動。車いすなら移乗後の移動。〔P73〕",["外出は含まない（外出時の介助は特記へ）","見守り等は「常時の付き添い」だけ。離れた所からの見守り→1","車いす自操→1（車いす使用を特記）","手を引く・段差で押す→3","トイレ誘導の声かけは2-5/2-6で評価","トイレ5回自力・食堂3回介助→回数の多い1"]],
+ ["2-3","えん下","A","EN","過去1週間","食物を飲み込む能力。必ずしも試行せず、聞き取りでよい。〔P76〕",["咀しゃく・口の中の状況は見ない","2.見守り等は「1でも3でもない」場合。見守りが実際に行われている必要はない","きざみ食・トロミ食でむせずに飲めれば1","固形と液体で違えばより頻回な状況で","経管栄養・中心静脈栄養のみ→3"]],
+ ["2-4","食事摂取","K","K4","過去1週間","配膳後の食器から口に入れるまで。経管栄養の注入・中心静脈栄養も含む。〔P78〕",["調理・配膳・後片付け・エプロン・着席は含まない","確認・指示・声かけ・皿の置き換え→2","小さく切る・ほぐす・骨をとる・スプーンに乗せる→3","中心静脈栄養のみ→4","毎朝数口だけ介助（21回中7回）→1"]],
+ ["2-5","排尿","K","K4","過去1週間","排尿動作（ズボンの上げ下げ・トイレや尿器への排尿）、陰部の清拭、水洗、排尿後の掃除、オムツ・パッド交換、カテーテル後始末。〔P81〕",["トイレまでの移動は2-2、更衣は着脱で評価","トイレのタイミングを伝える声かけ→2（排泄だけの例外）","おむつを準備から後始末まで自分で→1","人工透析で排尿なし→1","ポータブルトイレの一括の後始末も排尿後の後始末として評価","特記は方法・頻度・失敗の有無・昼夜の違い"]],
+ ["2-6","排便","K","K4","過去1週間","排便動作、肛門の清拭、水洗、排便後の掃除、オムツ交換、ストーマ袋の準備・交換・後始末。〔P84〕",["浣腸・摘便そのものは含まないが付随する行為は含む","ストーマの準備・片付けだけ介助でも3","ポータブルトイレの後始末は含む","特記は方法・頻度・失敗の有無・昼夜の違い"]],
+ ["2-7","口腔清潔","K","K3","過去1週間","歯ブラシ・水の用意、歯磨き粉をつける、義歯をはずす、うがい。〔P87〕",["3択。見守り・磨き残しの確認→2","介護者が磨き本人はすすぐだけ→3","洗面所への移動・掃除は含まない"]],
+ ["2-8","洗顔","K","K3","過去1週間","タオルの準備、蛇口をひねる、顔を洗う、拭く、衣服の濡れの確認。蒸しタオルで拭くことも含む。〔P89〕",["洗面所への誘導・周辺の掃除は含まない","見守り・濡れの確認→2","洗顔の習慣がなければ顔を拭く行為で代替","できそうでも職員が拭いていれば3"]],
+ ["2-9","整髪","K","K3","過去1週間","ブラシ・整髪料の準備、髪をとかす、ブラッシング。〔P91〕",["頭髪がない・短髪→頭を拭く行為で代替","鏡のある場所への移動は含まない"]],
+ ["2-10","上衣の着脱","K","K4","過去1週間","普段使用している上衣等の着脱。〔P93〕",["衣服の選択・準備・手渡しは含まない（手渡せば自分で着る→1）","声かけしながら手渡し→2","構えた服に自ら袖を通す→3","全部介助で本人は体を揺らすだけ→4"]],
+ ["2-11","ズボン等の着脱","K","K4","過去1週間","普段使用しているズボン・パンツ等の着脱。〔P96〕",["常時の付き添いが要る見守り→2","足を通すのは自分、引き上げ・ボタンは介助→3","浴衣式の寝巻きならパンツ・オムツの着脱で代替"]],
+ ["2-12","外出頻度","U","GA","過去1か月","1回概ね30分以上、居住地の敷地外へ出る頻度。〔P99〕",["目的・同行者は問わない","徘徊・救急搬送は外出ではない","同一敷地内のデイ・診療所、庭仕事は外出ではない","過去1か月に大きく変化したら変化後の状況で"]],
+ ["3-1","意思の伝達","A","IS","調査日＋日頃","手段を問わず、意思を他者に伝えられるか。〔P101〕",["身振り・筆談でもよい。内容の合理性は問わない","「痛い」「腹が減った」等の限られた内容だけ→3","調査日の状況と日頃の状況の両方を特記"]],
+ ["3-2","毎日の日課を理解","A","YN","過去1週間","起床・就寝・食事等のおおまかな内容を理解しているか。〔P103〕",["厳密な時間・曜日ごとの予定までは要らない","正誤が確認できなければ2"]],
+ ["3-3","生年月日や年齢を言う","A","YN","過去1週間","生年月日か年齢のどちらか一方を言えるか。〔P104〕",["生年月日は数日のずれ、年齢は2歳までのずれなら1（3歳ずれたら2）","数え年でも1"]],
+ ["3-4","短期記憶","A","YN","過去1週間","面接調査の直前・当日にしたことを具体的に答えられるか。〔P105〕",["難しければ3品テスト：ペン・時計・視力確認表を見せてしまい、5分以上後に2つを見せ、見せていない1つを答えられるか","当日答えられても日頃覚えていないことが多ければ2"]],
+ ["3-5","自分の名前を言う","A","YN","過去1週間","姓か名のどちらかを言えるか。〔P107〕",["旧姓でもよい","失語症でも、うなずき等で自分の名前と確実に分かれば1"]],
+ ["3-6","今の季節を理解する","A","YN","過去1週間","面接調査日の季節を答えられるか。〔P108〕",["旧暦や多少のずれは可","月日が言えても季節が言えなければ2"]],
+ ["3-7","場所の理解","A","YN","過去1週間","「ここはどこですか」に答えられるか。〔P109〕",["施設か自宅かの区別がつけば1。施設名・所在地は不要"]],
+ ["3-8","徘徊","U","BP","過去1か月","歩き回る、車いすで動き回る、床やベッドの上で這い回る等、目的もなく動き回る。〔P110〕",["ベッドの上を這い回るだけでも該当","意識障害・寝たきりで起こりえなければ1"],"bpsd"],
+ ["3-9","外出すると戻れない","U","BP","過去1か月","外出して一人で戻れない。居室・居住棟から出て戻れない場合も含む。〔P112〕",["屋外に出なくても、居室に戻れなければ該当"],"bpsd"],
+ ["4-1","物を盗られたなどと被害的になる","U","BP","過去1か月","盗られていない物を盗られたと言う等。食べ物に毒が入っている、自分の食事だけない等も含む。〔P116〕",["対応していなくても週1回以上なら3"],"bpsd"],
+ ["4-2","作話","U","BP","過去1か月","事実と異なる話。自分に都合のよい話、失敗を取りつくろう話も含む。〔P117〕",["家族が手間と感じていなくても行動があれば頻度で"],"bpsd"],
+ ["4-3","泣いたり、笑ったりして感情が不安定になる","U","BP","過去1か月","場面に合わない感情の起伏（突然泣く・笑う・怒る）が不自然なほど続く。〔P118〕",["昔から涙もろい等の性格→1"],"bpsd"],
+ ["4-4","昼夜の逆転がある","U","BP","過去1か月","夜間何度も目覚め疲労や眠気で日中活動できない、もしくは昼夜の生活が逆転。〔P119〕",["夜更かしの習慣・暑さ騒音・トイレのための起床は含まない","目が覚めても昼寝せず活動できていれば1"],"bpsd"],
+ ["4-5","しつこく同じ話をする","U","BP","過去1か月","場面や目的からみて不適当に、しつこく同じ話をする。〔P120〕",["昔からの性格→1","特記で大事なのは手間と頻度"],"bpsd"],
+ ["4-6","大声をだす","U","BP","過去1か月","周囲に迷惑となる大声を出す。〔P121〕",["もともと声が大きい→1","特記で大事なのは手間と頻度"],"bpsd"],
+ ["4-7","介護に抵抗する","U","BP","過去1か月","介護者の手を払う、介護を拒否する等。〔P122〕",["言っても従わないだけ（声かけしても寝てしまう等）は含まない"],"bpsd"],
+ ["4-8","「家に帰る」等と言い落ち着きがない","U","BP","過去1か月","「家に帰る」等の意思表示と、落ち着きのなさの両方がある。〔P123〕",["言うだけで落ち着いていれば1","自宅でも自分の家と分からず言う場合は含む"],"bpsd"],
+ ["4-9","一人で外に出たがり目が離せない","U","BP","過去1か月","一人で外に出たがり目が離せない。〔P124〕",["歩けない・環境の工夫で出ない→1"],"bpsd"],
+ ["4-10","いろいろなものを集めたり、無断でもってくる","U","BP","過去1か月","明らかに周囲の状況に合致しない収集。〔P125〕",["昔からの習慣で箱や新聞紙を捨てない→1"],"bpsd"],
+ ["4-11","物を壊したり、衣類を破いたりする","U","BP","過去1か月","壊す・破く。壊れなくても破壊しようとする行動、周囲の状況に合致しない「捨てる」行為も含む。〔P126〕",["工夫や治療で今は起きていない→1（予防手段がない場合の状況・手間・頻度を特記）"],"bpsd"],
+ ["4-12","ひどい物忘れ","U","BP","過去1か月","物忘れで行動が起きている、または周囲が対応しなければならない状況（火の不始末等）。〔P127〕",["電話の伝言を忘れる等の単なる物忘れは含まない","意思疎通が全くできない寝たきり→1","実際に対応しているかは問わない"],"bpsd"],
+ ["4-13","意味もなく独り言や独り笑いをする","U","BP","過去1か月","場面や状況と無関係に独り言・独り笑いが続く、突然始まる。〔P128〕",["性格的に独り言が多い→1"],"bpsd"],
+ ["4-14","自分勝手に行動する","U","BP","過去1か月","明らかに周囲の状況に合致しない自分勝手な行動。〔P129〕",["性格的な身勝手→1"],"bpsd"],
+ ["4-15","話がまとまらず、会話にならない","U","BP","過去1か月","話に一貫性がない、話題を次々変える等で会話が成立しない。〔P130〕",["もともと話下手→1","会話不成立ほどではないが見守りの手間がある→1＋特記に手間"],"bpsd"],
+ ["5-1","薬の内服","K","K3","過去1週間","薬や水を手元に用意する、薬を口に入れる、飲み込む。〔P132〕",["3択。見守り・量の指示・家族の分包→2","薬局の分包は介助に数えない","用意と口に入れるのが全介助（飲み込みは自分）→3","胃ろうからの注入介助→3","処方なし→処方された場合を想定して選ぶ","注射・塗り薬は含まない"]],
+ ["5-2","金銭の管理","K","K3","過去1週間","所持金の支出入の把握・管理、出し入れする金額の計算。〔P135〕",["銀行での出し入れは含まない","買い物を頼んでも支出入を自分で管理→1","現金がなくても年金・預貯金等の管理の状況で","財布から出し入れするだけ→3"]],
+ ["5-3","日常の意思決定","A","KE","調査日＋日頃","毎日の暮らしの活動に関する意思決定。〔P137〕",["ほとんど決められないがテレビ・献立は決めることがある→3","特別な場合＝ケアプランへの参加・治療方針への合意・冠婚葬祭等","調査日の状況と日頃の状況の両方を特記"]],
+ ["5-4","集団への不適応","U","BP","過去1か月","家族以外の集まりへの参加を強く拒否する等、明らかに周囲の状況に合致しない行動。〔P139〕",["性格的に集団が好きでない→1","寝たきり等で参加の可能性がない→1"],"bpsd"],
+ ["5-5","買い物","K","K4","過去1週間","食材・日用品を選び、代金を支払う。電話・ネットで自分で注文するのも含む。〔P141〕",["店までの移動・店内移動は含まない","不要品の返品・精算の介助→3","ベッドから指示しヘルパーが手配→3","家族代行・施設の一括購入はその状況で（常に不適切ではない）"]],
+ ["5-6","簡単な調理","K","K4","過去1週間","炊飯、弁当・惣菜・レトルト・冷凍食品の加熱、即席めんの調理。〔P144〕",["お茶の準備・配下膳・後片付け・買い物は含まない","発生している行為（炊飯だけ等）のすべてに介助→4","施設の一括調理→4","調理不要の流動食のみ→1"]]
+];
+const MED = ["点滴の管理","中心静脈栄養","透析","ストーマ（人工肛門）の処置","酸素療法","レスピレーター（人工呼吸器）","気管切開の処置","疼痛の看護","経管栄養","モニター測定（血圧・心拍・酸素飽和度等）","じょくそうの処置","カテーテル（コンドームカテーテル・留置カテーテル等）"];
+const MEDTIP = {
+ "点滴の管理":"現在点滴していなくても開始できる体制なら含む。急性期の治療目的は含まない。疼痛の看護で点滴なら両方",
+ "中心静脈栄養":"供給できる体制なら含む。経口摂取が一部可能でも含む",
+ "透析":"方法・種類を問わない（腹膜透析も該当）",
+ "ストーマ（人工肛門）の処置":"医師・看護師による消毒・バッグ交換等。家族の処置は含まない",
+ "酸素療法":"実施場所を問わない（外出時・通院時のみも該当）",
+ "レスピレーター（人工呼吸器）":"経口・経鼻・気管切開の別や機種を問わない",
+ "気管切開の処置":"気管切開がなければ喀痰吸引が何回あっても該当しない",
+ "疼痛の看護":"がん末期級の痛みへの点滴・硬膜外持続注入・座薬・貼付剤・注射。マッサージ・電気治療・内服は含まない",
+ "経管栄養":"経口・経鼻・胃ろうを問わない。投薬目的の胃管は含まない",
+ "モニター測定（血圧・心拍・酸素飽和度等）":"いずれか1つ以上を24時間継続（血圧は1時間に1回以上）。家族が測るのは含まない",
+ "じょくそうの処置":"大きさ・程度を問わない。完治後に医師の指示なく続く処置は含まない",
+ "カテーテル（コンドームカテーテル・留置カテーテル等）":"尿排泄のためのカテーテルの管理。急性期の一時的・終了したものは含まない"
+};
+const NOACT = { /* 行為が発生しないときの扱い〔P58〜145〕 */
+ "1-10":"清拭のみ・入浴拒否→「4.行っていない」",
+ "1-11":"つめがない（全指切断等）→四肢の清拭の介助で代替して評価",
+ "2-1":"移乗の機会がない寝たきり→行為が生じた場合を想定し適切な方法を選ぶ。根拠を特記",
+ "2-2":"移動の機会がない→行為が生じた場合を想定し適切な方法を選ぶ。根拠を特記",
+ "2-4":"中心静脈栄養・経管栄養のみ→注入も食事摂取に含む（全介助など）",
+ "2-5":"人工透析で排尿がない→「1.介助されていない」",
+ "2-8":"洗顔の習慣がない→入浴後やベッド上で顔を拭く行為で代替",
+ "2-9":"頭髪がない・短髪→頭を拭く行為で代替",
+ "2-11":"ズボンをはかない（浴衣式）→パンツ・オムツの着脱で代替",
+ "5-1":"処方がない→処方された場合を想定（以前の服薬状況等から）し、根拠を特記",
+ "5-5":"家族代行・施設の一括購入→その状況で選ぶ（全部なら4）",
+ "5-6":"施設の一括調理→炊飯が介助されているとみて4／調理不要の流動食のみ→1"
+};
+/* 聞き方の例（寝屋川市「認定調査員テキスト2009改訂版 聞き方集」平成23年 を参考に要約・言い換え） */
+const QS = {
+ "1-1":["（動作を見せて）「腕を前に、肩の高さまで上げられますか。横にも広げられますか」","「膝を伸ばして、足をこの高さまで上げられますか」","「動かしにくい所はありますか」（欠損がないか目でも確認）","先に拘縮を確認してから麻痺を見ると判断しやすい"],
+ "1-2":["「お医者さんから動かすのを止められている所や、脱臼したことはありますか」","「肩・股・膝を私が少し動かしてもよいですか。痛ければすぐ止めます」"],
+ "1-3":["「横を向いてみていただけますか」","（できないとき）「いつもは何にもつかまらずに寝返りできますか。柵などにつかまりますか」"],
+ "1-4":["「起き上がってみていただけますか」","（できないとき）「いつもは何かにつかまったり、手をついたりして起き上がりますか」"],
+ "1-5":["「背もたれなしで10分くらい座っていられますか」","「食事や、お風呂で体を洗うときは、どんな姿勢で座っていますか」（背もたれ付きのいすでは判断しにくいとき）"],
+ "1-6":["「何にもつかまらずに、10秒くらい立っていられますか」"],
+ "1-7":["「5mくらい続けて歩けますか。途中で休むことはありますか」","「家の中では杖や壁を使いますか」（玄関まで出迎えてくれた様子でも判断できる）"],
+ "1-8":["「いすから立ち上がってみていただけますか」","「立つときは何かにつかまったり、膝に手をついたりしますか」"],
+ "1-9":["「片足を少し上げて立てますか」","「階段や上がりかまちはどうやって上がっていますか。浴槽をまたぐときは？」"],
+ "1-10":["「体は自分で洗っていますか」","「洗ってもらう所はありますか。どこですか」","「週に何回入浴しますか。そのたびに体を洗いますか」","「洗いにくくて困ることはありますか」（やり直しがあれば理由も）"],
+ "1-11":["「爪は自分で切っていますか」","「手と足、それぞれ誰が切っていますか」","「この1か月で切りましたか」（伸びすぎ・深爪を目で確認）"],
+ "1-12":["「字が見えにくくて困ることはありますか」","依頼書などの文字が読めれば「普通」の確認になる。確認表は正面に、1mの距離は腕などで測っておく"],
+ "1-13":["「私の声は聞こえにくくないですか」","「普段、聞こえなくて困ることはありますか」"],
+ "2-1":["「ベッドから車いすやいすへの乗り移りは、自分でしていますか」","「体を支えてもらったり、車いすを差し入れてもらったりしますか」","トイレ・食事・入浴など、乗り移る場面と回数を確認","「乗り移りは安全にできていますか」"],
+ "2-2":["「トイレや食事、お風呂へはどうやって行っていますか」","「誰かが付き添ったり、手を引いたりしますか」","「この1週間で、転んだり場所が分からなくなったりしたことはありますか」","「通院や買い物のときはどうですか」（外出は選択に入れず、特記へ）"],
+ "2-3":["「食事やお茶が飲み込みにくいことはありますか」","「むせたり、のどに詰まらせたりすることはありますか」"],
+ "2-4":["「食事は自分で食べていますか。手伝ってもらうことはありますか」","「お皿を動かしたり、食べやすく切ったり、骨を取ったりしてもらいますか」","「それは毎食ですか」（回数で確認）"],
+ "2-5":["「トイレのとき、手伝ってもらうことはありますか。後始末は？」","「昼と夜で、それぞれ何回くらい行きますか」","「パッドは1日に何回替えますか」","「間に合わないことはありますか」（衣服や床の汚れも確認）"],
+ "2-6":["「排便のとき、手伝ってもらうことはありますか。後始末は？」","「便秘や下痢のときはどうしていますか」（浣腸・摘便に伴う介助）","「昼と夜で違いはありますか」"],
+ "2-7":["「歯磨きは自分でしていますか」","「入れ歯ですか。手入れや出し入れはどうしていますか」","「1日に何回磨きますか」（道具の準備・やり直しの有無も）"],
+ "2-8":["「顔は自分で洗っていますか」","「手伝ってもらうことはありますか」「1日に何回洗いますか」"],
+ "2-9":["「髪は自分でとかしていますか」（整っているか見た目でも確認）"],
+ "2-10":["「上着の着替えは自分でできますか」","「服を持ってもらえば、袖は自分で通せますか」","「1日（1週間）に何回着替えますか。今の服はいつ着替えましたか」","「着替えにどのくらい時間がかかりますか」（前後・裏表も見た目で確認）"],
+ "2-11":["「ズボンやパンツの着替えは自分でできますか」（上衣とは分けて聞く）","「ズボンを持ってもらえば、足は自分で通せますか」","「1日（1週間）に何回着替えますか」"],
+ "2-12":["「この1か月、買い物や通院、デイサービスなどで何回くらい出かけましたか」","「そのほかに出かけた所はありますか」"],
+ "3-1":["調査中の会話の様子から判断する","「普段、自分の気持ちを伝えられずに困ることはありますか」"],
+ "3-2":["「朝起きてから寝るまで、どんなふうに過ごしていますか」","起床・就寝・食事の時間を聞いてもよい"],
+ "3-3":["「生年月日を教えてください。今おいくつですか」"],
+ "3-4":["「私が来る少し前まで、何をされていましたか」","難しければ3品テスト：ペン・時計・視力確認表を見せて復唱→しまう→5分以上後に2つを見せ、ない1つを聞く"],
+ "3-5":["「お名前を教えてください」（調査の始めに聞くと緊張がほぐれる）"],
+ "3-6":["「今の季節は何ですか」"],
+ "3-7":["「ここはどこですか。今いらっしゃる所がどこか分かりますか」"],
+ "3-8":["「特に用事もないのに、歩き回ることはありますか」"],
+ "3-9":["「出かけて戻れなくなったことはありますか」","「（施設で）自分の部屋が分からなくなることはありますか」"],
+ "4-1":["「物を盗られたとか、食事に何か入れられた、食べさせてもらえないなどと言うことはありますか」"],
+ "4-2":["「事実と違う話をしたり、失敗を人のせいにしたりすることはありますか」"],
+ "4-3":["「笑う場面でないのに笑ったり、急に泣いたり怒ったりすることはありますか」（調査中の様子も）"],
+ "4-4":["「夜眠れなくて困ることはありますか。そのせいで昼間ずっと寝ていることは？」","「眠れないときはどうしていますか。眠剤は飲んでいますか」"],
+ "4-5":["「場面に合わないほど、同じ話を繰り返すことはありますか」"],
+ "4-6":["「大きな声や奇声で、周りが困ることはありますか」"],
+ "4-7":["「手伝おうとすると、手を払ったり嫌がったりすることはありますか」"],
+ "4-8":["「家にいるのに『家に帰る』と言って、うろうろしたり荷物をまとめたりすることはありますか」"],
+ "4-9":["「一人で外に出ようとして、目が離せないことはありますか」"],
+ "4-10":["「いろいろな物を集めたり、人の物を持ってきたりすることはありますか」"],
+ "4-11":["「物を壊したり、服を破いたりすることはありますか」（周囲に合わない物を捨てる行為も）"],
+ "4-12":["「物忘れで困っていることはありますか。貴重品をなくすことは？」","「それで探し回ったり、周りが何か対応したりすることはありますか（火の始末など）」"],
+ "4-13":["「意味もなく独り言を言ったり、一人で笑ったりすることはありますか」","「誰もいない方や壁・鏡に向かって話すことは？」"],
+ "4-14":["「周りの状況に合わない、自分勝手な行動で困ることはありますか」"],
+ "4-15":["「話がまとまらず、会話にならないことはありますか」"],
+ "5-1":["「薬は自分で管理して飲んでいますか」","「薬と水は自分で用意しますか。分包は誰がしていますか」","「飲み忘れや飲み間違いはありますか」「1日に何回ですか」"],
+ "5-2":["「お金の計算や管理は自分でしていますか」","「年金や預金は誰が管理していますか。ご本人も内容を知っていますか」","「手元にもいくらか持っていますか」"],
+ "5-3":["「着る服や、見たいテレビ番組は自分で選べますか」","「治療やサービスの利用について、自分の考えを周りに伝えていますか」"],
+ "5-4":["「デイサービスなどの集まりで、困ったことはありますか」"],
+ "5-5":["「食材や日用品の買い物は自分でしていますか」","「品物は自分で選べますか。支払いはどうしていますか」（選ぶ・取る・払うのどこに介助があるか）","「週に何回ですか」"],
+ "5-6":["「ご飯を炊いたり、お惣菜を電子レンジで温めたりは自分でしていますか」","「即席めんは自分で作れますか」（食事の形は人それぞれなので状況に合わせて）"],
+ "M":["「ここ2週間で、お医者さんや看護師さんから受けている処置はありますか」","「通院先での処置はありますか。どのくらいの頻度ですか」"]
+};
+const QS_BPSD = ["切り出し：「日頃の様子や介護で、困っていることはありますか」（不快にさせない聞き方から）","回数が出にくいとき：「最近いつありましたか。その前は？」","手間の確認：「そんなとき、どうされていますか」「1日のうち、いつ頃起きますか」"];
+const QS_ABILITY = "動作は「〜してください」ではなく「〜できますか」と尋ね、無理にさせない。痛みがあれば中止。";
+const AXN = {A:"能力",K:"介助の方法",U:"有無",M:"特別な医療",J:"自立度"};
+const GROUPS = [["1","第1群"],["2","第2群"],["3","第3群"],["4","第4群"],["5","第5群"],["M","特別な医療"],["J","自立度"]];
+const ALL = ITEMS.map(a=>({c:a[0],n:a[1],ax:a[2],ch:a[3],per:a[4],def:a[5],tips:a[6],kind:a[7]||"",g:a[0].split("-")[0]}))
+  .concat([{c:"M",n:"過去14日間にうけた特別な医療",ax:"M",ch:"MED",per:"過去14日間",g:"M",def:"医師、または医師の指示に基づく看護師等が行った、継続している医療行為。サービス提供機関の種類や、医師の指示が14日以内かは問わない。〔P146〜147〕",tips:["家族・介護職の類似行為は含まない（研修修了の介護職による喀痰吸引〔気管カニューレ内〕・経管栄養は例外）","急性疾患への一時的な対応・終了したものは含まない","情報は本人・家族・介護者から得る。医療機関への問い合わせは不適切","特記は「実施頻度／継続性」「実施者」「必要とする理由」の3点"],kind:"med"},
+   {c:"J1",n:"障害高齢者の日常生活自立度",ax:"J",ch:"SH",per:"調査時の様子（＋過去1週間）",g:"J",def:"移動に関わる状態に着目。J＝独力で外出／A＝屋内は概ね自立だが介助なしに外出しない（A1＝日中ほとんど離床、A2＝寝たり起きたり）／B＝日中ベッド上が主だが座位は保つ（B1＝自分で車いすへ、B2＝介助で）／C＝1日中ベッド上（C1＝自力で寝返り、C2＝寝返りもできない）。〔P155〜156〕",tips:["補装具・自助具を使った状態でよい","Bで夜間のみおむつは介助とみなさない"]},
+   {c:"J2",n:"認知症高齢者の日常生活自立度",ax:"J",ch:"NI",per:"調査時の様子",g:"J",def:"Ⅰ＝ほぼ自立／Ⅱ＝注意していれば自立（a＝家庭外、b＝家庭内でも）／Ⅲ＝介護が必要（a＝日中中心、b＝夜間中心）／Ⅳ＝常に介護が必要／M＝専門医療が必要。〔P157〕",tips:["Ⅱa例：道に迷う、買物・金銭管理のミス／Ⅱb例：服薬管理ができない、留守番ができない","火の不始末は4-12で評価し特記","幻視・暴言・不潔行為・異食などは関連項目か自立度の特記に"]}]);
+const BYC = Object.fromEntries(ALL.map(x=>[x.c,x]));
+const choicesOf = it => it.ch==="MAHI" ? ["ない","左上肢","右上肢","左下肢","右下肢","その他"] : it.ch==="KOU" ? ["ない","肩関節","股関節","膝関節","その他"] : it.ch==="MED" ? MED : CH[it.ch];
+const isMulti = it => it.kind==="multi" || it.kind==="med";
+
+/* ===== 保存（この端末のブラウザ内だけ） ===== */
+const KEY = "ninteiNote.v1";
+let DB = {cases:[], cur:null};
+let storageOK = true;
+function load(){ try{ const s = localStorage.getItem(KEY); if(s) DB = JSON.parse(s); }catch(e){ storageOK=false; } }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(DB)); storageOK=true; }catch(e){ storageOK=false; } }
+function cur(){ return DB.cases.find(c=>c.id===DB.cur) || null; }
+function rec(code){ const c=cur(); if(!c) return {}; return c.r[code] || (c.r[code]={}); }
+
+function sampleCase(){
+  return {id:"例-001", sample:true, date:new Date().toISOString().slice(0,10), memo:"操作を試すための見本です。実際の調査には「準備・管理」から新しい番号で作成してください。",
+    pre:{}, r:{
+      "1-1":{v:[1]}, "1-3":{v:2, tok:"（1-3）調査時はベッド柵につかまれば自力で寝返りができた。家族の話では週1回程度めまいがひどい日があり、その日は何かにつかまってもできない。より頻回な状況から「2.何かにつかまればできる」を選択する。"},
+      "1-7":{v:3}, "2-2":{v:1, tok:"（2-2）歩行はできないが、車いすを自分でこいで移動しており介助は行われていない。"},
+      "2-5":{v:2, tok:"（2-5）認知症でトイレのタイミングが分からず、家族が1日5回程度声をかけている。"},
+      "4-5":{v:3}, "M":{v:[]}
+    }};
+}
+
+/* ===== 状態 ===== */
+let TAB="items", GF="1", OPEN=null;
+const $ = s=>document.querySelector(s);
+const esc = s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function toast(t){ const d=document.createElement("div"); d.className="toast"; d.textContent=t; document.body.appendChild(d); setTimeout(()=>d.remove(),1800); }
+async function copy(text, el){ try{ await navigator.clipboard.writeText(text); toast("コピーしました"); }catch(e){ if(el){ el.focus(); el.select && el.select(); } toast("自動コピーできません。選択してコピーしてください"); } }
+
+function valText(it, r){
+  if(r.v==null || (Array.isArray(r.v)&&r.v.length===0 && !(it.kind==="med"&&r.medDone))) return "";
+  const cs = choicesOf(it);
+  if(it.kind==="med") return r.v.length? r.v.map(i=>cs[i]).join("、") : "該当なし";
+  if(isMulti(it)) return r.v.map(i=>`${i+1}.${cs[i]}`).join("、");
+  return `${r.v}.${cs[r.v-1]}`;
+}
+function done(it, r){ if(it.kind==="med") return !!r.medDone || (Array.isArray(r.v)&&r.v.length>0); return r.v!=null && !(Array.isArray(r.v)&&r.v.length===0); }
+
+/* ===== 判定ロジック ===== */
+const VAGUE = ["ときどき","時々","たまに","頻繁","しばしば","時折","よく","たびたび","度々","まれに","いつも"];
+function vagueIn(t){ return VAGUE.filter(w=>t && t.includes(w)); }
+function bpsdChoice(n, per){ // 回数→選択（BPSD関連〔P114〕）
+  const perWeek = per==="週" ? n : per==="月" ? n/4.3 : n*7;
+  const perMonth = per==="月" ? n : per==="週" ? n*4.3 : n*30;
+  if(perWeek>=1) return 3; if(perMonth>=1) return 2; return 1;
+}
+function gaiChoice(n){ return n>=4 ? 1 : n>=1 ? 2 : 3; } // 外出頻度（月の回数）
+
+function issues(){
+  const c=cur(); if(!c) return [];
+  const out=[]; const r=c.r;
+  const v = k => r[k] && r[k].v;
+  const tk = k => (r[k] && r[k].tok) || "";
+  const add=(lv,code,msg)=>out.push({lv,code,msg});
+  // 未選択
+  const miss = ALL.filter(it=>!done(it, r[it.c]||{}));
+  if(miss.length) add("bad","",`未選択の項目が${miss.length}件あります：${miss.slice(0,8).map(x=>x.c==="M"?"特別な医療":x.c==="J1"?"障害自立度":x.c==="J2"?"認知症自立度":x.c).join("、")}${miss.length>8?" ほか":""}`);
+  // 警告コード（まれな組み合わせ）〔P9〜11〕
+  if(v("1-5")===4 && v("1-7")===1) add("bad","1-5",`座位保持「4.できない」なのに歩行「1.つかまらないでできる」（警告コード06の例）。選択を見直してください。`);
+  if(v("1-7")===1 && v("2-2")===4) add("bad","2-2",`歩行「1.つかまらないでできる」なのに移動「4.全介助」（警告コード50の例）。実際にありうるなら関係を特記に。`);
+  if(v("2-3")===3 && v("2-4")===1) add("bad","2-4",`えん下「3.できない」なのに食事摂取「1.介助されていない」（警告コード17の例）。`);
+  if(v("1-13")===5 && ["3-2","3-3","3-4","3-5","3-6","3-7"].every(k=>v(k)===1)) add("bad","1-13",`聴力「5.判断不能」なのに第3群がすべて「できる」（警告コード28の例）。`);
+  // 能力と介助の関係〔P22〕
+  if(v("1-7")===3 && v("2-2")===1 && !tk("2-2")) add("warn","2-2","歩行「できない」で移動「介助されていない」。車いす自操など、両者の関係を特記に書いてください〔P22〕。");
+  // 項目ごとの特記漏れ
+  ALL.forEach(it=>{
+    const R=r[it.c]||{}; const t=R.tok||"";
+    if(!done(it,R)) return;
+    if((it.c==="1-1"||it.c==="1-2") && Array.isArray(R.v)){ const other = it.c==="1-1"?5:4; if(R.v.includes(other) && !t) add("bad",it.c,`「その他」を選んだので、部位を必ず特記してください〔P31・P36〕。`); }
+    if(it.kind==="bpsd" && R.v>=2 && !t) add("warn",it.c,`行動が「${R.v===3?"ある":"ときどきある"}」。対応の手間と頻度（対応していなければそのこと）を特記に〔P28〕。`);
+    if((it.c==="3-1"||it.c==="5-3") && !t) add("warn",it.c,"調査日の状況と日頃の状況の両方を特記に書きます〔P102・P138〕。");
+    if(R.freqUsed && !t) add("warn",it.c,"「より頻回な状況」で選びました。頻回でない側の状況と頻度を特記し、事務局にも伝えます〔P9・P24〕。");
+    if(R.inapp && !t) add("bad",it.c,"不適切と判断して選びました。判断の理由と事実を特記しないと審査会で評価されません〔P25〕。");
+    if(R.trial==="no" && !t) add("warn",it.c,"確認動作ができなかった項目です。理由と、聞き取った日頃の状況を特記に〔P21〕。");
+    if(R.trial==="diff" && !t) add("warn",it.c,"試行と日頃の状況が違う項目です。両方の状況と選択根拠を特記に〔P21〕。");
+    const vg = vagueIn(t); if(vg.length) add("warn",it.c,`特記に「${vg.join("・")}」があります。頻度は「週2回」のように数で書きます〔P19〕。`);
+    if(it.ax==="K" && R.v===2 && /全介助|全面的|すべて介助/.test(t)) add("bad",it.c,"選択は「見守り等」なのに特記に「全介助」等の記載。選択と特記が食い違っています〔P8〕。");
+    if(it.ax==="K" && R.v===1 && /一部介助|全介助|介助している|介助が必要/.test(t) && !R.inapp) add("warn",it.c,"選択は「介助されていない」ですが、特記に介助の記載があります。一連の行為の範囲外の介助か確認を。");
+  });
+  // 特別な医療の3点
+  const m=r["M"]; if(m && Array.isArray(m.v)) m.v.forEach(i=>{ const d=(m.det||{})[i]||{}; if(!d.f||!d.who||!d.why) add("warn","M",`特別な医療「${MED[i]}」：実施頻度／継続性・実施者・必要とする理由の3点を記入してください〔P147〕。`); if(d.who && /家族|ヘルパー|介護職|本人/.test(d.who)) add("bad","M",`特別な医療「${MED[i]}」の実施者が「${d.who}」。医師・看護師等の行為でなければ該当しません（研修修了介護職の喀痰吸引・経管栄養は例外）。`); });
+  return out;
+}
+
+/* ===== 画面描画 ===== */
+function renderHeader(){
+  const sel=$("#caseSel");
+  sel.innerHTML = DB.cases.map(c=>`<option value="${esc(c.id)}" ${c.id===DB.cur?"selected":""}>${esc(c.id)}${c.sample?"（見本）":""}　${esc(c.date||"")}</option>`).join("") || `<option>調査がありません</option>`;
+  const c=cur(); let n=0; if(c) n=ALL.filter(it=>done(it,c.r[it.c]||{})).length;
+  $("#progBar").style.width = c? (n/ALL.length*100)+"%" : "0";
+  $("#progTxt").textContent = c? `入力済み ${n} / ${ALL.length}（第1〜5群・特別な医療・自立度）${storageOK?"":"　※この端末に保存できない状態です。まとめからバックアップを取ってください"}` : "";
+  const iss = c? issues().filter(x=>x.lv!=="info").length : 0;
+  $("#tabCheck").dataset.n = iss;
+  document.querySelectorAll("nav.tabs button").forEach(b=>b.setAttribute("aria-selected", b.dataset.tab===TAB));
+}
+
+function renderItems(){
+  const c=cur();
+  if(!c) return `<p>調査がありません。「準備・管理」から作成してください。</p>`;
+  let h = c.sample? `<div class="sample">見本の調査「${esc(c.id)}」を表示しています。${esc(c.memo)}</div>`:"";
+  h += `<div class="chips" role="toolbar">${GROUPS.map(([k,l])=>{ const its=ALL.filter(x=>x.g===k); const d=its.filter(x=>done(x,c.r[x.c]||{})).length; return `<button data-gf="${k}" aria-pressed="${GF===k}">${l} ${d}/${its.length}</button>`;}).join("")}</div>`;
+  h += `<div class="list">`;
+  ALL.filter(x=>x.g===GF).forEach(it=>{
+    const r=c.r[it.c]||{}; const vt=valText(it,r);
+    const fl = [r.tok?`<span class="dot">特記</span>`:"", r.freqUsed?`<span class="dot w">頻回</span>`:"", r.inapp?`<span class="dot w">不適切</span>`:""].join("");
+    h += `<button class="item ${done(it,r)?"done":""}" data-open="${it.c}"><span class="code">${it.c.startsWith("J")||it.c==="M"?"":it.c}</span><span class="nm">${esc(it.n)}</span><span class="ax ${it.ax}">${AXN[it.ax]}</span><span class="val">${vt?`<b>${esc(vt)}</b>`:"未選択"} <span class="flags">${fl}</span></span></button>`;
+  });
+  return h+`</div>`;
+}
+
+function helperHTML(it, r){
+  let h="";
+  if(it.ax==="A" || it.ax==="K" || it.c==="1-1" || it.c==="1-2"){
+    if(it.ax==="A" || it.c==="1-1" || it.c==="1-2"){
+      h += `<details ${r.trial?"open":""}><summary>試行（確認動作）と日頃の状況</summary><div class="bd">
+        <div class="choices" style="margin-top:0">
+        ${[["same","試行した。日頃も同じ"],["diff","試行した。日頃と違う（日によって違う）"],["no","試行できなかった（危険・拒否・体調など）"],["skip","調査中に同じ動作を確認できた（試行省略）"]].map(([k,l])=>`<button data-trial="${k}" aria-pressed="${r.trial===k}">${l}</button>`).join("")}
+        </div><p class="note">違うときは過去1週間の「より頻回な状況」で選ぶ。最も重い状態や中間は選ばない〔P21〕。確認動作ができても日頃の聞き取りは必要。危険なら無理に試行しない。</p></div></details>`;
+    }
+    if(!isMulti(it)){
+      const cs=choicesOf(it); const f=r.freq||{};
+      h += `<details ${r.freqUsed?"open":""}><summary>日によって違う →「より頻回な状況」を計算</summary><div class="bd">
+        <p class="note">過去1週間（つめ切りは1か月）に<b>その行為が発生した回数</b>を、選択肢ごとに入れてください。入浴のない日など、行為がなかった日は数えません〔P24〕。</p>
+        ${cs.map((x,i)=>`<label class="f" for="fq${i}">${i+1}.${esc(x)}</label><input type="number" inputmode="numeric" min="0" id="fq${i}" data-fq="${i}" value="${f[i]??""}">`).join("")}
+        <div class="row" style="margin-top:10px"><button class="btn" data-act="freq">計算して選ぶ</button></div>
+        <div id="fqRes"></div></div></details>`;
+    }
+  }
+  if(it.kind==="bpsd"){
+    const b=r.bp||{};
+    h += `<details open><summary>頻度から判定（過去1か月）</summary><div class="bd">
+      <div class="chk"><input type="checkbox" id="bpA" ${b.nat?"checked":""}><label for="bpA">もともとの性格・生活習慣による行動である</label></div>
+      <div class="chk"><input type="checkbox" id="bpB" ${b.fit?"checked":""}><label for="bpB">場面や目的からみて不適当な行動である（周囲の状況に合致しない）</label></div>
+      <div class="g2" style="margin-top:8px"><div><label class="f" for="bpN">回数</label><input type="number" inputmode="numeric" min="0" id="bpN" value="${b.n??""}"></div>
+      <div><label class="f" for="bpP">期間あたり</label><select class="s" id="bpP">${["週","月","日"].map(p=>`<option ${b.p===p?"selected":""}>${p}</option>`).join("")}</select></div></div>
+      <div class="row" style="margin-top:10px"><button class="btn" data-act="bpsd">判定して選ぶ</button></div>
+      <p class="note">週1回以上＝3.ある／月1回以上週1回未満＝2.ときどきある／それ未満＝1.ない〔P114〕。<b>対応や手間がなくても</b>行動があれば頻度で選ぶ〔P115〕。環境が大きく変わったら変化後の状況で。</p>
+      <div id="bpRes"></div></div></details>`;
+  }
+  if(it.c==="2-12"){
+    h += `<details open><summary>回数から判定（過去1か月）</summary><div class="bd">
+      <label class="f" for="gaN">1回おおむね30分以上、敷地の外へ出た回数（1か月）</label><input type="number" inputmode="numeric" min="0" id="gaN" value="${(r.ga??"")}">
+      <div class="row" style="margin-top:10px"><button class="btn" data-act="gai">判定して選ぶ</button></div></div></details>`;
+  }
+  if(NOACT[it.c]) h += `<details><summary>その行為が発生しないとき</summary><div class="bd"><p>${esc(NOACT[it.c])}</p></div></details>`;
+  if(it.ax==="K"){
+    const ia=r.ia||[];
+    const rs=["独居・日中独居などで介護者がおらず、適切な介助が提供されていない","介護放棄・介護抵抗のため、適切な介助が提供されていない","介護者の心身の状態から、介助が提供できない","過剰な介助が、むしろ本人の自立を妨げている"];
+    h += `<details ${r.inapp?"open":""}><summary>実際の介助が「不適切」と思うとき</summary><div class="bd">
+      ${rs.map((x,i)=>`<div class="chk"><input type="checkbox" id="ia${i}" data-ia="${i}" ${ia.includes(i)?"checked":""}><label for="ia${i}">${x}</label></div>`).join("")}
+      <p class="note">当てはまれば、理由と事実（汗疹・便の付着・転倒・医師の注意など）を特記に書き、<b>適切な介助の方法</b>を選びます。独居や老老介護<b>だけ</b>を理由にしない。確定するのは介護認定審査会〔P23・P25〕。</p></div></details>`;
+  }
+  return h;
+}
+
+function tokHTML(it, r){
+  const t=r.tok||""; const vg=vagueIn(t);
+  return `<h3>特記事項</h3>
+    <div class="g2"><div><label class="f" for="tkS">状況（実際の様子・日頃と調査時）</label><textarea id="tkS" placeholder="例：調査時はベッド柵につかまれば起き上がれた。家族の話では、日頃は倦怠感が強い">${esc(r.s||"")}</textarea></div>
+    <div><label class="f" for="tkC">手間（誰が・何を・どれくらい）</label><textarea id="tkC" placeholder="例：家族が夜間2回起きて体を支えている">${esc(r.care||"")}</textarea></div></div>
+    <div class="g2"><div><label class="f" for="tkF">頻度（数で）</label><input type="text" id="tkF" placeholder="例：週5日程度／1日2回" value="${esc(r.f||"")}"></div>
+    <div><label class="f" for="tkR">選んだ理由</label><select class="s" id="tkR">${["","より頻回な状況から","試行の状況と日頃の状況から","定義に基づき","不適切な状況にあると判断し、適切な介助の方法として","行為が生じた場合を想定し","類似の行為で代替して評価し"].map(x=>`<option ${r.why===x?"selected":""}>${x}</option>`).join("")}</select></div></div>
+    <div class="row" style="margin-top:10px"><button class="btn o" data-act="draft">下書きを作る</button><button class="btn o" data-act="copytok">特記をコピー</button></div>
+    <label class="f" for="tok">特記事項（このまま転記できる文章）</label>
+    <textarea id="tok" style="min-height:8em">${esc(t)}</textarea>
+    ${vg.length?`<div class="warnbox">「${vg.join("・")}」は人によって受け取り方が違う言葉です。「週2回」のように数で書いてください〔P19〕。</div>`:""}
+    <p class="note">型：状況 → 頻度 → 選択（「番号.選択肢」を選択する）→ 一次判定に表れない手間。状態ではなく手間を書く〔P2〕。迷った理由も書く〔P8〕。</p>`;
+}
+
+function medHTML(r){
+  const v=r.v||[]; const det=r.det||{};
+  return `<div class="choices">${MED.map((m,i)=>`<button data-med="${i}" aria-pressed="${v.includes(i)}"><span class="no">${i+1}</span><span>${esc(m)}<br><span class="note">${esc(MEDTIP[m])}</span></span></button>`).join("")}</div>
+   <div class="chk" style="margin-top:8px"><input type="checkbox" id="medNone" ${r.medDone&&!v.length?"checked":""}><label for="medNone">確認した結果、該当なし</label></div>
+   ${v.map(i=>{const d=det[i]||{}; return `<div class="card"><b>${esc(MED[i])}</b>
+     <label class="f" for="mf${i}">実施頻度／継続性</label><input type="text" id="mf${i}" data-md="${i}" data-k="f" value="${esc(d.f||"")}" placeholder="例：1日3回、2か月前から継続">
+     <label class="f" for="mw${i}">実施者</label><input type="text" id="mw${i}" data-md="${i}" data-k="who" value="${esc(d.who||"")}" placeholder="例：訪問看護師">
+     <label class="f" for="my${i}">必要とする理由</label><input type="text" id="my${i}" data-md="${i}" data-k="why" value="${esc(d.why||"")}" placeholder="例：経口摂取ができないため"></div>`;}).join("")}`;
+}
+
+function renderSheet(){
+  const old=$(".sheet"); if(old) old.remove();
+  if(!OPEN) return;
+  const it=BYC[OPEN]; const r=rec(OPEN); const cs=choicesOf(it);
+  const list=ALL; const idx=list.findIndex(x=>x.c===OPEN);
+  const s=document.createElement("div"); s.className="sheet"; s.setAttribute("role","dialog"); s.setAttribute("aria-label",it.n);
+  let body="";
+  if(it.kind==="med") body = medHTML(r);
+  else body = `<div class="choices">${cs.map((x,i)=>{ const on = isMulti(it) ? (r.v||[]).includes(i) : r.v===i+1; return `<button data-ch="${i}" aria-pressed="${on}"><span class="no">${i+1}.</span><span>${esc(x)}</span></button>`;}).join("")}</div>${isMulti(it)?`<p class="note">部位は複数選べます。「ない」を選ぶとほかは外れます。</p>`:""}`;
+  s.innerHTML = `<div class="bar"><button data-act="close">← 一覧</button><span class="t">${it.c.startsWith("J")||it.c==="M"?"":esc(it.c)+" "}${esc(it.n)}</span><button data-act="prev" ${idx<=0?"disabled":""} aria-label="前の項目">↑</button><button data-act="next" ${idx>=list.length-1?"disabled":""} aria-label="次の項目">↓</button></div>
+    <div class="in">
+      <div class="meta"><span class="ax ${it.ax}">${AXN[it.ax]}</span><span>期間：${esc(it.per)}</span>${it.ax==="A"?"<span>できるか（介助や支障は見ない）</span>":it.ax==="K"?"<span>実際にどう介助されているか（量ではなく方法）</span>":it.ax==="U"?"<span>あったか（手間では選ばない）</span>":""}</div>
+      <div class="def">${esc(it.def)}</div>
+      ${body}
+      ${(QS[it.c]||it.kind==="bpsd")?`<details open><summary>聞き方の例</summary><div class="bd"><ul class="tips">${(QS[it.c]||[]).map(q=>`<li>${esc(q)}</li>`).join("")}${it.kind==="bpsd"?QS_BPSD.map(q=>`<li class="note">${esc(q)}</li>`).join(""):""}${(it.ax==="A"&&it.g==="1")||it.c==="1-1"||it.c==="1-2"?`<li class="note">${esc(QS_ABILITY)}</li>`:""}</ul></div></details>`:""}
+      <details><summary>つまずきやすい点</summary><div class="bd"><ul class="tips">${it.tips.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div></details>
+      ${helperHTML(it,r)}
+      ${tokHTML(it,r)}
+    </div>`;
+  document.body.appendChild(s);
+  bindSheet(s, it);
+}
+
+function renderCheck(){
+  const c=cur(); if(!c) return `<p>調査がありません。</p>`;
+  const is=issues();
+  let h=`<h2>矛盾・記入漏れチェック</h2><p class="note">調査の最後に確認します。押すとその項目を開きます。警告コードの例は〔P9〜11〕。実際にありうる組み合わせなら無理に合わせず、関係を特記に書きます。</p>`;
+  if(!is.length) h+=`<div class="card">問題は見つかりませんでした。</div>`;
+  const lab={bad:"要確認",warn:"注意",info:"参考"};
+  is.forEach(x=>{ h+=`<button class="issue ${x.lv}" ${x.code?`data-open="${x.code}"`:""}><span class="k">${lab[x.lv]}${x.code&&!x.code.startsWith("J")&&x.code!=="M"?"<br>"+x.code:""}</span><span>${esc(x.msg)}</span></button>`; });
+  h+=`<h3>調査の終わりに</h3><div class="card">
+    <div class="chk"><input type="checkbox" id="end1" ${c.end1?"checked":""} data-end="end1"><label for="end1">不明な点・迷う点を本人・介護者に再確認した〔P8〕</label></div>
+    <div class="chk"><input type="checkbox" id="end2" ${c.end2?"checked":""} data-end="end2"><label for="end2">基本調査と特記事項に矛盾がないか確認した〔P8〕</label></div>
+    <div class="chk"><input type="checkbox" id="end3" ${c.end3?"checked":""} data-end="end3"><label for="end3">より頻回な状況で選んだ・介助者不在・特殊な状況で迷った項目を事務局に伝える〔P9〕</label></div></div>`;
+  return h;
+}
+
+function summaryText(c){
+  const L=[]; L.push(`調査番号：${c.id}　調査日：${c.date||""}`); L.push("");
+  GROUPS.forEach(([g,l])=>{
+    L.push(`■${l}`);
+    ALL.filter(x=>x.g===g).forEach(it=>{ const r=c.r[it.c]||{}; L.push(`${it.c.startsWith("J")||it.c==="M"?"":it.c+" "}${it.n}：${valText(it,r)||"（未選択）"}`); });
+    if(g==="M"){ const m=c.r["M"]; if(m&&m.v) m.v.forEach(i=>{const d=(m.det||{})[i]||{}; L.push(`　・${MED[i]}：実施頻度／継続性＝${d.f||"（未記入）"}、実施者＝${d.who||"（未記入）"}、理由＝${d.why||"（未記入）"}`);}); }
+    L.push("");
+  });
+  L.push("■特記事項");
+  GROUPS.forEach(([g,l])=>{ const ts=ALL.filter(x=>x.g===g).map(it=>(c.r[it.c]||{}).tok).filter(Boolean); if(ts.length){ L.push(`［${l}］`); ts.forEach(t=>L.push(t)); } });
+  return L.join("\n");
+}
+function renderOut(){
+  const c=cur(); if(!c) return `<p>調査がありません。</p>`;
+  const txt=summaryText(c);
+  return `<h2>転記用まとめ</h2><p class="note">市町村の調査票に転記するための一覧です。氏名は入れていません。</p>
+    <div class="row"><button class="btn" data-act="copysum">まとめをコピー</button></div>
+    <pre class="out" id="sumOut" tabindex="0">${esc(txt)}</pre>`;
+}
+
+function renderPrep(){
+  const c=cur();
+  const pre=(c&&c.pre)||{};
+  const P=[["p1","日時：本人・介護者と調整し、介護者がいない日を避けた〔P7〕"],["p2","本人が通常の状態か確認した（急病・高熱なら日を改める）〔P6〕"],["p3","場所：日頃の状況が分かる場所。施設・病院は普段過ごす場所で、プライバシーに配慮〔P7〕"],["p4","持ち物：身分を証する物（調査員証等）〔P7〕"],["p5","持ち物：視力確認表。短期記憶の3品テスト用にペンと時計〔P7・P105〕"],["p6","立ち会い：日頃の状況を知る家族・職員に依頼した（特別な医療は家族等の同席が望ましい）〔P7・P147〕"],["p7","調査の目的を説明する。専門用語を使わず、項目の順番にこだわらない〔P7〕"]];
+  let h=`<h2>調査前チェック</h2>${c?`<div class="card">${P.map(([k,l])=>`<div class="chk"><input type="checkbox" id="${k}" data-pre="${k}" ${pre[k]?"checked":""}><label for="${k}">${l}</label></div>`).join("")}</div>`:""}
+  <h2>調査の管理</h2>
+  <div class="pin">氏名・住所・電話番号は入れないでください。調査は番号（例：A-001）で管理します。データはこの端末のブラウザの中だけに保存され、外部には送信されません。</div>
+  <div class="card"><label class="f" for="newId">新しい調査の番号</label><input type="text" id="newId" placeholder="例：A-001" autocomplete="off">
+    <label class="f" for="newDate">調査日</label><input type="date" id="newDate" value="${new Date().toISOString().slice(0,10)}">
+    <div class="row" style="margin-top:10px"><button class="btn" data-act="newcase">作成する</button></div></div>
+  ${c?`<div class="card"><b>選択中：${esc(c.id)}</b><label class="f" for="curDate">調査日</label><input type="date" id="curDate" value="${esc(c.date||"")}">
+    <div class="row" style="margin-top:10px"><button class="btn d" data-act="delcase">この調査を削除</button></div></div>`:""}
+  <h2>バックアップ</h2>
+  <p class="note">ブラウザのデータ消去や機種変更で消えることがあります。下の文字をコピーして安全な場所に保存し、戻すときは貼り付けて「読み込む」を押します。ファイルからも読み込めます。</p>
+  <div class="row"><button class="btn o" data-act="copyjson">バックアップをコピー</button></div>
+  <label class="f" for="jsonBox">バックアップの文字（貼り付けて読み込み）</label><textarea id="jsonBox" style="min-height:6em"></textarea>
+  <div class="row" style="margin-top:8px"><button class="btn o" data-act="importjson">貼り付けた内容を読み込む</button><label class="btn o" for="jsonFile" style="display:inline-block">ファイルから読み込む</label><input type="file" id="jsonFile" accept=".json,.txt,application/json,text/plain" hidden></div>
+  <h2>このアプリについて</h2><p class="note">根拠は「認定調査員テキスト2009（令和6年4月改訂版）」。〔P○〕はテキストのページ。判断の補助と記録のための道具です。最終的な選択は各項目の定義に基づき調査員が行い、一次判定の確定は介護認定審査会が行います。</p>`;
+  return h;
+}
+
+function render(){
+  renderHeader();
+  const m=$("#main");
+  m.innerHTML = TAB==="items"?renderItems():TAB==="check"?renderCheck():TAB==="out"?renderOut():renderPrep();
+  renderSheet();
+}
+
+/* ===== 操作 ===== */
+function confirmBox(msg, ok){
+  const d=document.createElement("div"); d.className="modal";
+  d.innerHTML=`<div class="box"><p style="margin-top:0">${esc(msg)}</p><div class="row"><button class="btn d" data-y>削除する</button><button class="btn o" data-n>やめる</button></div></div>`;
+  document.body.appendChild(d);
+  d.querySelector("[data-y]").onclick=()=>{d.remove();ok();}; d.querySelector("[data-n]").onclick=()=>d.remove();
+}
+function setV(code, v){ rec(code).v=v; save(); }
+
+function bindSheet(s, it){
+  const r=rec(it.c);
+  s.addEventListener("click", e=>{
+    const b=e.target.closest("button"); if(!b) return;
+    if(b.dataset.ch!=null){
+      const i=+b.dataset.ch;
+      if(isMulti(it)){ let v=r.v||[]; if(i===0) v=[0]; else { v=v.filter(x=>x!==0); v=v.includes(i)?v.filter(x=>x!==i):v.concat(i).sort((a,b)=>a-b); } r.v=v; }
+      else r.v=i+1;
+      save(); renderHeader(); refreshSheet(); return;
+    }
+    if(b.dataset.med!=null){ const i=+b.dataset.med; let v=r.v||[]; v=v.includes(i)?v.filter(x=>x!==i):v.concat(i).sort((a,b)=>a-b); r.v=v; r.medDone=true; save(); renderHeader(); refreshSheet(); return; }
+    if(b.dataset.trial){ r.trial = r.trial===b.dataset.trial?null:b.dataset.trial; if(r.trial==="diff" && !r.why) r.why="より頻回な状況から"; if(r.trial==="diff"||r.trial==="same"||r.trial==="no") {} save(); refreshSheet(); return; }
+    const a=b.dataset.act;
+    if(a==="close"){ OPEN=null; render(); return; }
+    if(a==="prev"||a==="next"){ const i=ALL.findIndex(x=>x.c===it.c); const n=ALL[i+(a==="next"?1:-1)]; if(n){ OPEN=n.c; GF=n.g; render(); } return; }
+    if(a==="freq"){
+      const cs=choicesOf(it); const f={}; let tot=0;
+      s.querySelectorAll("[data-fq]").forEach(x=>{ const n=parseInt(x.value,10); if(!isNaN(n)&&n>0){ f[x.dataset.fq]=n; tot+=n; } });
+      r.freq=f; const ent=Object.entries(f).sort((a,b)=>b[1]-a[1]);
+      const box=s.querySelector("#fqRes");
+      if(!ent.length){ box.innerHTML=`<div class="warnbox">回数を入れてください。</div>`; return; }
+      if(ent.length>1 && ent[0][1]===ent[1][1]){ box.innerHTML=`<div class="warnbox">回数が同じ選択肢があります（${ent.filter(e=>e[1]===ent[0][1]).map(e=>cs[e[0]]).join("・")}）。日頃の状況を聞き取り、迷った理由を特記して審査会の判断を仰いでください〔P8・P22〕。</div>`; save(); return; }
+      const best=+ent[0][0]; r.v=best+1; r.freqUsed=ent.length>1; r.why= r.freqUsed?"より頻回な状況から":(r.why||"");
+      if(r.freqUsed && !r.f) r.f = ent.map(e=>`${cs[e[0]]}${e[1]}回`).join("、")+`（計${tot}回）`;
+      save(); renderHeader(); refreshSheet();
+      s.querySelector("#fqRes").innerHTML=`<div class="res">「${best+1}.${esc(cs[best])}」を選びました（${ent[0][1]}/${tot}回）。${r.freqUsed?"頻回でない側の場面と頻度を特記に書き、事務局にも伝えます。":""}</div>`;
+      return;
+    }
+    if(a==="bpsd"){
+      const n=parseFloat(s.querySelector("#bpN").value); const p=s.querySelector("#bpP").value;
+      const nat=s.querySelector("#bpA").checked, fit=s.querySelector("#bpB").checked;
+      r.bp={n:isNaN(n)?null:n,p,nat,fit};
+      const box=s.querySelector("#bpRes");
+      if(nat && !fit){ r.v=1; save(); renderHeader(); refreshSheet(); s.querySelector("#bpRes").innerHTML=`<div class="res">性格・習慣による行動なので「1.ない」を選びました。手間があれば特記に書きます。</div>`; return; }
+      if(isNaN(n)){ box.innerHTML=`<div class="warnbox">回数を入れてください（0回なら0）。</div>`; return; }
+      const v=bpsdChoice(n,p); r.v=v; if(!r.f && n>0) r.f=`${p}${n}回程度`;
+      save(); renderHeader(); refreshSheet();
+      s.querySelector("#bpRes").innerHTML=`<div class="res">「${v}.${CH.BP[v-1]}」を選びました。${v>1?"対応の内容と頻度（対応していなければそのこと）を特記に書きます。":""}</div>`;
+      return;
+    }
+    if(a==="gai"){ const n=parseInt(s.querySelector("#gaN").value,10); if(isNaN(n)){toast("回数を入れてください");return;} r.ga=n; r.v=gaiChoice(n); save(); renderHeader(); refreshSheet(); return; }
+    if(a==="draft"){
+      readTok(s,r); const cs=choicesOf(it);
+      const sel = it.kind==="med" ? "" : isMulti(it) ? (r.v||[]).map(i=>`「${i+1}.${cs[i]}」`).join("") : (r.v?`「${r.v}.${cs[r.v-1]}」`:"「（未選択）」");
+      let t=`（${it.c.startsWith("J")?it.n:it.c==="M"?"特別な医療":it.c}）`;
+      if(r.s) t+=r.s.replace(/[。．]?$/,"。");
+      if(r.f) t+=`頻度は${r.f}。`;
+      if(sel) t+=`${r.why?r.why:""}${sel}を選択する。`;
+      if(r.care) t+=r.care.replace(/[。．]?$/,"。");
+      if(it.kind==="bpsd" && r.v>=2 && !r.care) t+="（対応していない場合は「特に対応はしていない」と書く）";
+      r.tok=t; save(); refreshSheet(); toast("下書きを作りました。必要に応じて直してください"); return;
+    }
+    if(a==="copytok"){ readTok(s,r); save(); copy(r.tok||"", s.querySelector("#tok")); return; }
+  });
+  s.addEventListener("input", e=>{
+    const x=e.target;
+    if(["tkS","tkC","tkF","tkR","tok"].includes(x.id)){ readTok(s,r); save(); renderHeader(); if(x.id==="tok"){ const w=s.querySelector(".warnbox.vg"); } return; }
+    if(x.dataset.md!=null){ const i=x.dataset.md; r.det=r.det||{}; r.det[i]=r.det[i]||{}; r.det[i][x.dataset.k]=x.value; save(); renderHeader(); return; }
+  });
+  s.addEventListener("change", e=>{
+    const x=e.target;
+    if(x.dataset.ia!=null){ const ia=[]; s.querySelectorAll("[data-ia]").forEach(c=>{ if(c.checked) ia.push(+c.dataset.ia); }); r.ia=ia; r.inapp=ia.length>0; if(r.inapp) r.why="不適切な状況にあると判断し、適切な介助の方法として"; save(); renderHeader(); return; }
+    if(x.id==="medNone"){ r.medDone=x.checked; if(x.checked) r.v=[]; save(); renderHeader(); refreshSheet(); return; }
+    if(x.id==="tok"){ refreshSheet(); }
+  });
+}
+function readTok(s,r){ const g=id=>{const e=s.querySelector("#"+id); return e?e.value:undefined;}; r.s=g("tkS")??r.s; r.care=g("tkC")??r.care; r.f=g("tkF")??r.f; r.why=g("tkR")??r.why; const t=g("tok"); if(t!==undefined) r.tok=t; }
+function refreshSheet(){ const s=$(".sheet"); const y=s?s.scrollTop:0; const ae=document.activeElement&&document.activeElement.id; renderSheet(); const n=$(".sheet"); if(n){ n.scrollTop=y; if(ae){ const el=n.querySelector("#"+ae); if(el&&el.tagName!=="BUTTON") el.focus(); } } }
+
+document.addEventListener("click", e=>{
+  const b=e.target.closest("button"); if(!b || b.closest(".sheet") || b.closest(".modal")) return;
+  if(b.dataset.tab){ TAB=b.dataset.tab; OPEN=null; render(); window.scrollTo(0,0); try{localStorage.setItem(KEY+".tab",TAB);}catch(e){} return; }
+  if(b.dataset.gf){ GF=b.dataset.gf; render(); return; }
+  if(b.dataset.open){ OPEN=b.dataset.open; GF=BYC[OPEN].g; render(); return; }
+  const a=b.dataset.act;
+  if(a==="newcase"){
+    const id=$("#newId").value.trim(); const dt=$("#newDate").value;
+    if(!id){ toast("番号を入れてください"); return; }
+    if(/[一-龥ぁ-んァ-ン]{2,}(さん|様)?$/.test(id) && !/[0-9]/.test(id)){ toast("氏名ではなく番号で管理してください"); return; }
+    if(DB.cases.some(c=>c.id===id)){ toast("同じ番号の調査があります"); return; }
+    DB.cases.push({id,date:dt,r:{},pre:{}}); DB.cur=id; save(); TAB="items"; GF="1"; render(); toast(`${id} を作成しました`); return;
+  }
+  if(a==="delcase"){ const c=cur(); confirmBox(`調査「${c.id}」を削除します。元に戻せません。`, ()=>{ DB.cases=DB.cases.filter(x=>x.id!==c.id); DB.cur=DB.cases[0]?DB.cases[0].id:null; save(); render(); toast("削除しました"); }); return; }
+  if(a==="copysum"){ copy($("#sumOut").textContent, null); return; }
+  if(a==="copyjson"){ const t=JSON.stringify(DB); $("#jsonBox").value=t; copy(t, $("#jsonBox")); return; }
+  if(a==="importjson"){ importText($("#jsonBox").value); return; }
+});
+document.addEventListener("change", e=>{
+  const x=e.target; if(x.closest(".sheet")) return;
+  if(x.id==="caseSel"){ DB.cur=x.value; save(); OPEN=null; render(); return; }
+  if(x.dataset.pre){ const c=cur(); c.pre=c.pre||{}; c.pre[x.dataset.pre]=x.checked; save(); return; }
+  if(x.dataset.end){ const c=cur(); c[x.dataset.end]=x.checked; save(); return; }
+  if(x.id==="curDate"){ const c=cur(); c.date=x.value; save(); renderHeader(); return; }
+  if(x.id==="jsonFile" && x.files[0]){ const fr=new FileReader(); fr.onload=()=>importText(fr.result); fr.readAsText(x.files[0]); }
+});
+function importText(t){
+  try{ const d=JSON.parse(t); if(!d||!Array.isArray(d.cases)) throw 0;
+    d.cases.forEach(c=>{ const i=DB.cases.findIndex(x=>x.id===c.id); if(i>=0) DB.cases[i]=c; else DB.cases.push(c); });
+    DB.cur=d.cur||DB.cur||(DB.cases[0]&&DB.cases[0].id); save(); render(); toast(`${d.cases.length}件を読み込みました`);
+  }catch(e){ toast("読み込めませんでした。バックアップの文字をそのまま貼り付けてください"); }
+}
+
+/* ===== 起動 ===== */
+load();
+if(!DB.cases.length){ DB.cases=[sampleCase()]; DB.cur="例-001"; }
+if(!DB.cur && DB.cases[0]) DB.cur=DB.cases[0].id;
+try{ const t=localStorage.getItem(KEY+".tab"); if(t) TAB=t; }catch(e){}
+render();
+</script>
+
+<script>if("serviceWorker" in navigator){addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script>
+</body></html>
