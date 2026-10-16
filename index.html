@@ -10,146 +10,168 @@
 <link rel="icon" href="icon-192.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}</style>
 <title>認定調査ノート</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap">
 <style>
-/* Layout: phone-first single column; sticky header, list → full-screen item sheet, fixed bottom tab bar */
+/* Layout: phone-first. 一覧 → 1項目1画面（選択肢を最優先、補足はタブと下から出るパネル）。
+   デジタル庁デザインシステムの考え方に沿う：16px以上の本文・行間150%以上・十分なコントラスト・48px以上の押しやすい領域・はっきりしたフォーカス */
 :root{
-  --bg:#f3f5f7; --card:#ffffff; --fg:#1e2731; --sub:#5d6875; --line:#d9dee4;
-  --nav:#1f4a73; --nav-soft:#e6eef6;
-  --ab:#2563a8; --ab-soft:#e6eef9; --kai:#2a7a4c; --kai-soft:#e4f3ea; --umu:#bf5d17; --umu-soft:#fcefe3;
-  --med:#7a4bb0; --med-soft:#f0e9f8;
-  --ok:#2a7a4c; --warn:#a86400; --warn-soft:#fff4dd; --bad:#b83a2e; --bad-soft:#fbe9e7;
-  --font:"BIZ UDPGothic","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif;
+  --bg:#f5f6f8; --surface:#ffffff; --surface2:#eef0f4; --fg:#1a1c21; --sub:#4a4f5a; --line:#c8ccd4;
+  --primary:#1d4fb8; --primary-fg:#ffffff; --primary-soft:#e5edfb;
+  --ab:#1d56b0; --ab-soft:#e3ecfa; --kai:#18744a; --kai-soft:#e0f2e8; --umu:#b25209; --umu-soft:#fcecdc; --med:#6b3fb0; --med-soft:#efe7fa;
+  --ok:#18744a; --warn:#9a5b00; --warn-soft:#fff3d6; --bad:#c02a2a; --bad-soft:#fde8e8;
+  --focus:#f2b700;
+  --r-s:8px; --r-m:12px; --r-l:16px;
+  --font:"Noto Sans JP","BIZ UDPGothic","Hiragino Sans","Yu Gothic UI","Meiryo",sans-serif;
+  --fs-s:14px; --fs-m:16px; --fs-l:18px; --fs-xl:22px;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#12171d; --card:#1b222a; --fg:#e6ebf0; --sub:#9aa6b2; --line:#2e3843;
-  --nav:#8db8e3; --nav-soft:#1f2c3a;
-  --ab:#7fb0ee; --ab-soft:#1d2a3b; --kai:#71c793; --kai-soft:#1a2d22; --umu:#f0a066; --umu-soft:#33241a;
-  --med:#c3a1ec; --med-soft:#2a2236;
-  --ok:#71c793; --warn:#f0bd5e; --warn-soft:#332a17; --bad:#f08a7e; --bad-soft:#3a1f1c; color-scheme:dark}}
+  --bg:#121418; --surface:#1c1f25; --surface2:#262a32; --fg:#eceef2; --sub:#a9afbb; --line:#3a3f49;
+  --primary:#8fb3ff; --primary-fg:#0f1830; --primary-soft:#1f2b45;
+  --ab:#8fb3ff; --ab-soft:#1f2b45; --kai:#6fd09d; --kai-soft:#183326; --umu:#f3a35c; --umu-soft:#3a2716; --med:#c7a6f5; --med-soft:#2c2340;
+  --ok:#6fd09d; --warn:#f0c15a; --warn-soft:#3a2f12; --bad:#ff8a8a; --bad-soft:#3d1c1c; --focus:#ffd34d; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#12171d; --card:#1b222a; --fg:#e6ebf0; --sub:#9aa6b2; --line:#2e3843;
-  --nav:#8db8e3; --nav-soft:#1f2c3a;
-  --ab:#7fb0ee; --ab-soft:#1d2a3b; --kai:#71c793; --kai-soft:#1a2d22; --umu:#f0a066; --umu-soft:#33241a;
-  --med:#c3a1ec; --med-soft:#2a2236;
-  --ok:#71c793; --warn:#f0bd5e; --warn-soft:#332a17; --bad:#f08a7e; --bad-soft:#3a1f1c; color-scheme:dark}
+  --bg:#121418; --surface:#1c1f25; --surface2:#262a32; --fg:#eceef2; --sub:#a9afbb; --line:#3a3f49;
+  --primary:#8fb3ff; --primary-fg:#0f1830; --primary-soft:#1f2b45;
+  --ab:#8fb3ff; --ab-soft:#1f2b45; --kai:#6fd09d; --kai-soft:#183326; --umu:#f3a35c; --umu-soft:#3a2716; --med:#c7a6f5; --med-soft:#2c2340;
+  --ok:#6fd09d; --warn:#f0c15a; --warn-soft:#3a2f12; --bad:#ff8a8a; --bad-soft:#3d1c1c; --focus:#ffd34d; color-scheme:dark}
 *{box-sizing:border-box}
 html,body{height:100%}
-body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:16px;line-height:1.6;margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:var(--fs-m);line-height:1.7;margin:0;-webkit-text-size-adjust:100%}
 button,input,select,textarea{font:inherit;color:inherit}
-button{cursor:pointer}
-:focus-visible{outline:3px solid var(--nav);outline-offset:2px}
-.wrap{max-width:720px;margin:0 auto;padding-inline:16px;padding-block:0 96px}
-header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:10px 16px 8px;border-bottom:1px solid var(--line)}
-.top .row{display:flex;align-items:center;gap:8px;max-width:720px;margin:0 auto}
-.top h1{font-size:17px;margin:0;flex:0 0 auto;color:var(--nav);letter-spacing:.02em}
-.top select{flex:1;min-width:0;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
-.prog{max-width:720px;margin:6px auto 0;height:6px;background:var(--line);border-radius:4px;overflow:hidden}
-.prog i{display:block;height:100%;background:var(--nav);width:0}
-.progtxt{max-width:720px;margin:2px auto 0;font-size:12px;color:var(--sub)}
-nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--card);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding-bottom:env(safe-area-inset-bottom,0px)}
-nav.tabs button{border:0;background:none;padding:10px 4px 12px;font-size:13px;color:var(--sub);display:flex;flex-direction:column;align-items:center;gap:2px}
-nav.tabs button b{font-size:15px}
-nav.tabs button[aria-selected="true"]{color:var(--nav);font-weight:700;box-shadow:inset 0 3px 0 var(--nav)}
-.badge{position:relative}
-.badge[data-n]:not([data-n="0"])::after{content:attr(data-n);position:absolute;top:4px;right:22%;background:var(--bad);color:#fff;font-size:11px;border-radius:9px;padding:0 6px;line-height:18px}
-h2{font-size:18px;margin:18px 0 8px;text-wrap:balance}
-h3{font-size:15px;margin:14px 0 6px}
-.chips{display:flex;gap:6px;overflow-x:auto;padding:10px 0 4px;scrollbar-width:none}
-.chips button{flex:0 0 auto;border:1px solid var(--line);background:var(--card);border-radius:20px;padding:6px 12px;font-size:14px;white-space:nowrap}
-.chips button[aria-pressed="true"]{background:var(--nav);border-color:var(--nav);color:var(--card)}
-.list{display:flex;flex-direction:column;gap:6px;margin-top:6px}
-.item{display:grid;grid-template-columns:3.4em 1fr auto;gap:4px 10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-align:left;width:100%}
-.item .code{font-variant-numeric:tabular-nums;font-weight:700;color:var(--sub);font-size:14px}
-.item .nm{font-weight:700;min-width:0}
-.item .val{grid-column:2/4;font-size:14px;color:var(--sub);min-width:0}
-.item .val b{color:var(--fg)}
-.item.done{border-left:5px solid var(--ok)}
-.item.need{border-left:5px solid var(--warn);background:var(--warn-soft)}
-.item.err{border-left:5px solid var(--bad);background:var(--bad-soft)}
-.dot.r{background:var(--bad-soft);color:var(--bad)}
-.legend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px;color:var(--sub);margin-top:4px}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+h2{font-size:var(--fs-xl);line-height:1.4;margin:20px 0 8px;text-wrap:balance}
+h3{font-size:var(--fs-l);margin:16px 0 8px}
+.wrap{max-width:720px;margin:0 auto;padding-inline:16px;padding-block:0 104px}
+.note{font-size:var(--fs-s);color:var(--sub);line-height:1.6}
+/* ヘッダー */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:10px 16px 10px;border-bottom:1px solid var(--line)}
+.top .bar{display:flex;align-items:center;gap:10px;max-width:720px;margin:0 auto}
+.top h1{font-size:var(--fs-m);margin:0;flex:0 0 auto;color:var(--primary);font-weight:700}
+.top select{flex:1;min-width:0;min-height:44px;padding:6px 10px;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface)}
+.prog{max-width:720px;margin:8px auto 0;display:flex;align-items:center;gap:10px;font-size:var(--fs-s);color:var(--sub)}
+.prog .track{flex:1;height:8px;background:var(--surface2);border-radius:4px;overflow:hidden}
+.prog .track i{display:block;height:100%;background:var(--primary);width:0}
+/* 下のタブ */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav.tabs button{border:0;background:none;min-height:60px;font-size:13px;color:var(--sub);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;position:relative}
+nav.tabs button svg{width:22px;height:22px}
+nav.tabs button[aria-selected="true"]{color:var(--primary);font-weight:700}
+nav.tabs button[aria-selected="true"]::before{content:"";position:absolute;top:0;left:25%;right:25%;height:3px;background:var(--primary);border-radius:0 0 3px 3px}
+.badge[data-n]:not([data-n="0"])::after{content:attr(data-n);position:absolute;top:6px;left:56%;background:var(--bad);color:#fff;font-size:11px;border-radius:9px;padding:0 6px;line-height:18px}
+/* 群の切り替え */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:12px 0 6px;scrollbar-width:none}
+.chips button{flex:0 0 auto;min-height:40px;border:1px solid var(--line);background:var(--surface);border-radius:20px;padding:4px 14px;font-size:var(--fs-s);white-space:nowrap}
+.chips button[aria-pressed="true"]{background:var(--primary);border-color:var(--primary);color:var(--primary-fg);font-weight:700}
+.chips .cnt{display:inline-block;margin-left:6px;background:var(--bad);color:#fff;border-radius:9px;padding:0 6px;font-size:11px;line-height:18px}
+/* 項目一覧 */
+.list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.item{display:flex;align-items:center;gap:12px;min-height:64px;background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--line);border-radius:var(--r-m);padding:10px 14px;text-align:left;width:100%}
+.item.done{border-left-color:var(--ok)} .item.need{border-left-color:var(--warn)} .item.err{border-left-color:var(--bad)}
+.item .code{flex:0 0 2.8em;font-variant-numeric:tabular-nums;font-weight:700;color:var(--sub);font-size:var(--fs-s)}
+.item .main{flex:1;min-width:0}
+.item .nm{display:block;font-weight:700;line-height:1.45}
+.item .val{display:block;font-size:var(--fs-s);color:var(--sub);line-height:1.5}
+.item .val b{color:var(--fg);font-weight:500}
+.item .st{flex:0 0 auto;font-size:12px;font-weight:700;border-radius:6px;padding:2px 8px}
+.st.need{background:var(--warn-soft);color:var(--warn)} .st.err{background:var(--bad-soft);color:var(--bad)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--sub);margin-top:2px}
 .legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px;background:var(--line)}
 .legend .l1::before{background:var(--ok)} .legend .l2::before{background:var(--warn)} .legend .l3::before{background:var(--bad)}
-.chips button .cnt{display:inline-block;margin-left:4px;background:var(--bad);color:#fff;border-radius:9px;padding:0 6px;font-size:11px;line-height:17px}
-.tpls{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
-.tpls button{border:1px dashed var(--nav);background:var(--card);color:var(--nav);border-radius:16px;padding:5px 10px;font-size:13px;text-align:left;max-width:100%}
-.tplrow{display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line)}
-.tplrow:last-child{border-bottom:0}
-.tplrow .tx{flex:1;min-width:0;font-size:14px}
-.tplrow .sc{font-size:12px;color:var(--sub)}
-.tplrow button{flex:0 0 auto;border:1px solid var(--bad);color:var(--bad);background:var(--card);border-radius:8px;padding:3px 8px;font-size:13px}
-.item .flags{display:flex;gap:4px}
-.ax{display:inline-block;font-size:12px;font-weight:700;border-radius:6px;padding:1px 7px;white-space:nowrap}
+.ax{display:inline-block;font-size:12px;font-weight:700;border-radius:6px;padding:2px 8px;white-space:nowrap}
 .ax.A{background:var(--ab-soft);color:var(--ab)} .ax.K{background:var(--kai-soft);color:var(--kai)} .ax.U{background:var(--umu-soft);color:var(--umu)} .ax.M,.ax.J{background:var(--med-soft);color:var(--med)}
-.dot{font-size:11px;border-radius:5px;padding:0 5px;background:var(--nav-soft);color:var(--nav);font-weight:700}
-.dot.w{background:var(--warn-soft);color:var(--warn)}
-/* item sheet */
-.sheet{position:fixed;inset:0;z-index:10;background:var(--bg);overflow-y:auto;padding-top:env(safe-area-inset-top,0px)}
-.sheet .bar{position:sticky;top:0;z-index:2;background:var(--bg);display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--line)}
-.sheet .bar button{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:6px 12px}
-.sheet .bar .t{flex:1;min-width:0;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sheet .in{max-width:720px;margin:0 auto;padding-inline:16px;padding-block:12px 120px}
-.meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;color:var(--sub)}
-.def{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:10px;font-size:15px}
-.choices{display:flex;flex-direction:column;gap:8px;margin-top:12px}
-.choices button{text-align:left;border:2px solid var(--line);background:var(--card);border-radius:12px;padding:12px 14px;font-size:16px;display:flex;gap:10px;align-items:flex-start}
-.choices button .no{font-variant-numeric:tabular-nums;font-weight:700;color:var(--sub);min-width:1.4em}
-.choices button[aria-pressed="true"]{border-color:var(--nav);background:var(--nav-soft);font-weight:700}
-.choices button[aria-pressed="true"] .no{color:var(--nav)}
-details{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-top:10px}
-details>summary{padding:11px 12px;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:8px}
-details>summary::-webkit-details-marker{display:none}
-details>summary::after{content:"＋";color:var(--sub)}
-details[open]>summary::after{content:"－"}
-details .bd{padding:0 12px 12px}
-ul.tips{margin:0;padding-left:1.2em}
-ul.tips li{margin:4px 0}
-label.f{display:block;font-size:13px;color:var(--sub);margin:10px 0 4px}
-input[type=text],input[type=number],input[type=date],select.s,textarea{width:100%;border:1px solid var(--line);border-radius:10px;background:var(--card);padding:9px 10px;font-size:16px}
-textarea{min-height:5.5em;resize:vertical}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.btn{border:1px solid var(--nav);background:var(--nav);color:var(--card);border-radius:10px;padding:9px 14px;font-weight:700}
-.btn.o{background:var(--card);color:var(--nav)}
-.btn.d{background:var(--card);color:var(--bad);border-color:var(--bad)}
+/* 項目画面 */
+.sheet{position:fixed;inset:0;z-index:10;background:var(--bg);display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+.sbar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--line);background:var(--bg)}
+.sbar .sp{flex:1;text-align:right;font-size:var(--fs-s);color:var(--sub);font-variant-numeric:tabular-nums}
+.ghost{border:0;background:none;color:var(--primary);font-weight:700;min-height:44px;padding:0 8px}
+.sscroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.sin{max-width:720px;margin:0 auto;padding:16px 16px 24px}
+.ihead .ic{font-size:var(--fs-s);color:var(--sub);font-weight:500}
+.ihead h2{margin:2px 0 8px}
+.rule{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;font-size:var(--fs-s);color:var(--sub)}
+.choices{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.choices button{display:flex;align-items:center;gap:12px;min-height:56px;text-align:left;border:2px solid var(--line);background:var(--surface);border-radius:var(--r-m);padding:10px 16px;font-size:var(--fs-l);line-height:1.5}
+.choices .no{flex:0 0 1.6em;height:1.6em;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:var(--fs-s);font-weight:700;background:var(--surface2);color:var(--sub)}
+.choices button[aria-pressed="true"]{border-color:var(--primary);background:var(--primary-soft);font-weight:700}
+.choices button[aria-pressed="true"] .no{background:var(--primary);color:var(--primary-fg)}
+.choices .sub{display:block;font-size:var(--fs-s);font-weight:400;color:var(--sub)}
+.seg{display:flex;background:var(--surface2);border-radius:var(--r-m);padding:4px;gap:4px;margin-top:24px}
+.seg button{flex:1;min-height:44px;border:0;background:none;border-radius:var(--r-s);font-size:var(--fs-s);font-weight:700;color:var(--sub)}
+.seg button[aria-selected="true"]{background:var(--surface);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);padding:14px 16px;margin-top:8px}
+.panel ul{margin:0;padding-left:1.2em}
+.panel li{margin:6px 0}
+.panel .q{font-size:var(--fs-l);line-height:1.6;margin:0 0 8px}
+.linkb{border:0;background:none;color:var(--primary);font-weight:700;padding:6px 0;min-height:40px}
+.tools{margin-top:20px}
+.tools .tl{font-size:var(--fs-s);font-weight:700;color:var(--sub);margin-bottom:6px}
+.tools .row{display:flex;flex-wrap:wrap;gap:8px}
+.tools button{min-height:44px;border:1px solid var(--primary);background:var(--surface);color:var(--primary);border-radius:22px;padding:4px 16px;font-size:var(--fs-s);font-weight:700}
+.tools button.on{background:var(--primary-soft)}
+.rec{margin-top:24px}
+.rec textarea{margin-top:8px}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sfoot{display:grid;grid-template-columns:1fr 1.4fr;gap:10px;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--surface)}
+/* ボタン・入力 */
+.btn{min-height:48px;border:2px solid var(--primary);background:var(--primary);color:var(--primary-fg);border-radius:var(--r-s);padding:6px 18px;font-weight:700;font-size:var(--fs-m)}
+.btn.o{background:var(--surface);color:var(--primary)}
+.btn.d{background:var(--surface);color:var(--bad);border-color:var(--bad)}
+.btn.s{min-height:40px;padding:4px 14px;font-size:var(--fs-s)}
+.btn:disabled{opacity:.4}
+label.f{display:block;font-size:var(--fs-s);font-weight:700;margin:14px 0 6px}
+input[type=text],input[type=number],input[type=date],select.s,textarea{width:100%;min-height:48px;border:1px solid var(--line);border-radius:var(--r-s);background:var(--surface);padding:10px 12px;font-size:var(--fs-m);line-height:1.6}
+textarea{min-height:7em;resize:vertical}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.res{margin-top:8px;padding:10px 12px;border-radius:10px;background:var(--nav-soft);font-size:15px}
-.note{font-size:13px;color:var(--sub)}
-.warnbox{background:var(--warn-soft);color:var(--fg);border-left:4px solid var(--warn);padding:8px 12px;border-radius:8px;font-size:14px;margin-top:8px}
-.chk{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--line)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media (max-width:420px){.g2{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);padding:14px 16px;margin-top:12px}
+.res{margin-top:12px;padding:12px 14px;border-radius:var(--r-s);background:var(--primary-soft);font-size:var(--fs-m)}
+.warnbox{background:var(--warn-soft);border-left:4px solid var(--warn);padding:10px 12px;border-radius:var(--r-s);font-size:var(--fs-s);margin-top:8px}
+.chk{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}
 .chk:last-child{border-bottom:0}
-.chk input{width:22px;height:22px;flex:0 0 auto;margin-top:2px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:10px}
-.issue{display:flex;gap:10px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--warn);border-radius:10px;padding:10px 12px;margin-top:6px;width:100%;text-align:left}
-.issue.bad{border-left-color:var(--bad)} .issue.info{border-left-color:var(--nav)}
-.issue .k{font-size:12px;font-weight:700;white-space:nowrap}
-.issue.bad .k{color:var(--bad)} .issue .k{color:var(--warn)} .issue.info .k{color:var(--nav)}
-pre.out{white-space:pre-wrap;word-break:break-all;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;font-size:14px;font-family:var(--font);max-height:60vh;overflow:auto}
-.sample{background:var(--warn-soft);border:1px dashed var(--warn);border-radius:10px;padding:8px 12px;font-size:13px;margin-top:10px}
-.pin{background:var(--bad-soft);border-radius:10px;padding:10px 12px;font-size:14px;margin-top:10px}
-.modal{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center}
-.modal .box{background:var(--card);width:100%;max-width:720px;border-radius:16px 16px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px))}
-.toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:8px 16px;border-radius:20px;font-size:14px;z-index:30}
-@media (prefers-reduced-motion:no-preference){.sheet{animation:up .18s ease-out}@keyframes up{from{transform:translateY(12px);opacity:.6}}}
+.chk input{width:24px;height:24px;flex:0 0 auto;margin-top:2px;accent-color:var(--primary)}
+.issue{display:flex;gap:12px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--warn);border-radius:var(--r-m);padding:12px 14px;margin-top:8px;width:100%;text-align:left;min-height:56px}
+.issue.bad{border-left-color:var(--bad)}
+.issue .k{font-size:12px;font-weight:700;white-space:nowrap;color:var(--warn)}
+.issue.bad .k{color:var(--bad)}
+pre.out{white-space:pre-wrap;word-break:break-all;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);padding:12px;font-size:var(--fs-s);font-family:var(--font);max-height:60vh;overflow:auto;line-height:1.7}
+.sample{background:var(--warn-soft);border-radius:var(--r-m);padding:10px 14px;font-size:var(--fs-s);margin-top:12px}
+.pin{background:var(--bad-soft);border-radius:var(--r-m);padding:12px 14px;font-size:var(--fs-s);margin-top:12px}
+.tplrow{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}
+.tplrow:last-child{border-bottom:0}
+.tplrow .tx{flex:1;min-width:0;font-size:var(--fs-s)}
+.tplrow .sc{font-size:12px;color:var(--sub)}
+.tplrow button{flex:0 0 auto;min-height:40px;border:1px solid var(--bad);color:var(--bad);background:var(--surface);border-radius:var(--r-s);padding:4px 12px;font-size:var(--fs-s)}
+.tpls{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.tpls button{min-height:48px;border:1px solid var(--line);background:var(--surface);border-radius:var(--r-s);padding:8px 14px;text-align:left;font-size:var(--fs-m)}
+/* 下から出るパネル */
+.pop{position:fixed;inset:0;z-index:15;background:rgba(10,12,16,.5);display:flex;align-items:flex-end;justify-content:center}
+.pbox{background:var(--bg);width:100%;max-width:720px;max-height:88vh;border-radius:var(--r-l) var(--r-l) 0 0;display:flex;flex-direction:column}
+.phead{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.phead b{flex:1;font-size:var(--fs-l)}
+.pbody{overflow-y:auto;padding:4px 16px calc(24px + env(safe-area-inset-bottom,0px))}
+.modal{position:fixed;inset:0;z-index:20;background:rgba(10,12,16,.5);display:flex;align-items:flex-end;justify-content:center}
+.modal .box{background:var(--surface);width:100%;max-width:720px;border-radius:var(--r-l) var(--r-l) 0 0;padding:20px 16px calc(20px + env(safe-area-inset-bottom,0px))}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 18px;border-radius:24px;font-size:var(--fs-s);z-index:30;max-width:90vw}
+@media (prefers-reduced-motion:no-preference){.pbox{animation:up .2s ease-out}@keyframes up{from{transform:translateY(24px);opacity:.7}}}
 </style></head><body>
 
 <header class="top">
-  <div class="row">
+  <div class="bar">
     <h1>認定調査ノート</h1>
     <select id="caseSel" aria-label="調査を選ぶ"></select>
   </div>
-  <div class="prog"><i id="progBar"></i></div>
-  <div class="progtxt" id="progTxt"></div>
+  <div class="prog"><span class="track"><i id="progBar"></i></span><span id="progTxt"></span></div>
 </header>
 
 <main class="wrap" id="main"></main>
 
 <nav class="tabs" role="tablist">
-  <button role="tab" data-tab="items" aria-selected="true"><b>☰</b>項目</button>
-  <button role="tab" data-tab="check" class="badge" id="tabCheck"><b>✓</b>チェック</button>
-  <button role="tab" data-tab="out"><b>⎘</b>まとめ</button>
-  <button role="tab" data-tab="prep"><b>⚙</b>準備・管理</button>
+  <button role="tab" data-tab="items" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>項目</button>
+  <button role="tab" data-tab="check" class="badge" id="tabCheck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg>チェック</button>
+  <button role="tab" data-tab="out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h8"/></svg>まとめ</button>
+  <button role="tab" data-tab="prep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>準備・管理</button>
 </nav>
 
 <script>
@@ -462,7 +484,7 @@ function renderHeader(){
   sel.innerHTML = DB.cases.map(c=>`<option value="${esc(c.id)}" ${c.id===DB.cur?"selected":""}>${esc(c.id)}${c.sample?"（見本）":""}　${esc(c.date||"")}</option>`).join("") || `<option>調査がありません</option>`;
   const c=cur(); let n=0; if(c) n=ALL.filter(it=>done(it,c.r[it.c]||{})).length;
   $("#progBar").style.width = c? (n/ALL.length*100)+"%" : "0";
-  $("#progTxt").textContent = c? `入力済み ${n} / ${ALL.length}（第1〜5群・特別な医療・自立度）${storageOK?"":"　※この端末に保存できない状態です。まとめからバックアップを取ってください"}` : "";
+  $("#progTxt").textContent = c? `${n} / ${ALL.length} 入力済み${storageOK?"":"（この端末に保存できません。バックアップを取ってください）"}` : "";
   const iss = c? issues().filter(x=>x.lv!=="info").length : 0;
   $("#tabCheck").dataset.n = iss;
   document.querySelectorAll("nav.tabs button").forEach(b=>b.setAttribute("aria-selected", b.dataset.tab===TAB));
@@ -471,92 +493,55 @@ function renderHeader(){
 function renderItems(){
   const c=cur();
   if(!c) return `<p>調査がありません。「準備・管理」から作成してください。</p>`;
-  let h = c.sample? `<div class="sample">見本の調査「${esc(c.id)}」を表示しています。${esc(c.memo)}</div>`:"";
+  let h = c.sample? `<div class="sample">見本の調査です。実際の調査は「準備・管理」から番号で作成してください。</div>`:"";
   const st = itemStates();
   const gk = c.gk||{}; const gkN = GK_FIELDS.filter(f=>gk[f[0]]).length;
-  h += `<div class="chips" role="toolbar"><button data-gf="G" aria-pressed="${GF==="G"}">概況 ${gkN}/${GK_FIELDS.length}</button>${GROUPS.map(([k,l])=>{ const its=ALL.filter(x=>x.g===k); const d=its.filter(x=>done(x,c.r[x.c]||{})).length; const bad=its.filter(x=>st[x.c]==="err"||st[x.c]==="need").length; return `<button data-gf="${k}" aria-pressed="${GF===k}">${l} ${d}/${its.length}${bad?`<span class="cnt">${bad}</span>`:""}</button>`;}).join("")}</div>`;
+  h += `<div class="chips" role="toolbar" aria-label="群の切り替え"><button data-gf="G" aria-pressed="${GF==="G"}">概況 ${gkN}/${GK_FIELDS.length}</button>${GROUPS.map(([k,l])=>{ const its=ALL.filter(x=>x.g===k); const d=its.filter(x=>done(x,c.r[x.c]||{})).length; const bad=its.filter(x=>st[x.c]==="err"||st[x.c]==="need").length; return `<button data-gf="${k}" aria-pressed="${GF===k}">${l} ${d}/${its.length}${bad?`<span class="cnt">${bad}</span>`:""}</button>`;}).join("")}</div>`;
   if(GF==="G") return h + renderGaikyo(c);
-  h += `<div class="legend"><span>未選択</span><span class="l1">入力済み</span><span class="l2">特記などが未記入</span><span class="l3">要確認（矛盾・漏れ）</span></div>`;
-  h += `<div class="list">`;
+  h += `<div class="legend"><span>未選択</span><span class="l1">入力済み</span><span class="l2">特記が未記入</span><span class="l3">要確認</span></div><div class="list">`;
   ALL.filter(x=>x.g===GF).forEach(it=>{
     const r=c.r[it.c]||{}; const vt=valText(it,r); const s=st[it.c];
-    const fl = [s==="err"?`<span class="dot r">要確認</span>`:"", s==="need"?`<span class="dot w">特記未記入</span>`:"", r.tok?`<span class="dot">特記</span>`:"", r.memo?`<span class="dot">メモ</span>`:"", r.freqUsed?`<span class="dot w">頻回</span>`:"", r.inapp?`<span class="dot w">不適切</span>`:""].join("");
-    h += `<button class="item ${s==="err"?"err":s==="need"?"need":done(it,r)?"done":""}" data-open="${it.c}"><span class="code">${it.c.startsWith("J")||it.c==="M"?"":it.c}</span><span class="nm">${esc(it.n)}</span><span class="ax ${it.ax}">${AXN[it.ax]}</span><span class="val">${vt?`<b>${esc(vt)}</b>`:"未選択"} <span class="flags">${fl}</span></span></button>`;
+    const extra=[r.tok?"特記あり":"", r.memo?"メモあり":""].filter(Boolean).join("・");
+    h += `<button class="item ${s==="err"?"err":s==="need"?"need":done(it,r)?"done":""}" data-open="${it.c}">
+      <span class="code">${it.c.startsWith("J")||it.c==="M"?"":it.c}</span>
+      <span class="main"><span class="nm">${esc(it.n)}</span><span class="val">${vt?`<b>${esc(vt)}</b>`:"未選択"}${extra?`　${extra}`:""}</span></span>
+      ${s==="err"?`<span class="st err">要確認</span>`:s==="need"?`<span class="st need">特記</span>`:""}</button>`;
   });
   return h+`</div>`;
 }
 
-function helperHTML(it, r){
-  let h="";
-  if(it.ax==="A" || it.ax==="K" || it.c==="1-1" || it.c==="1-2"){
-    if(it.ax==="A" || it.c==="1-1" || it.c==="1-2"){
-      h += `<details ${r.trial?"open":""}><summary>試行（確認動作）と日頃の状況</summary><div class="bd">
-        <div class="choices" style="margin-top:0">
-        ${[["same","試行した。日頃も同じ"],["diff","試行した。日頃と違う（日によって違う）"],["no","試行できなかった（危険・拒否・体調など）"],["skip","調査中に同じ動作を確認できた（試行省略）"]].map(([k,l])=>`<button data-trial="${k}" aria-pressed="${r.trial===k}">${l}</button>`).join("")}
-        </div><p class="note">違うときは過去1週間の「より頻回な状況」で選ぶ。最も重い状態や中間は選ばない〔P21〕。確認動作ができても日頃の聞き取りは必要。危険なら無理に試行しない。</p></div></details>`;
-    }
-    if(!isMulti(it)){
-      const cs=choicesOf(it); const f=r.freq||{};
-      h += `<details ${r.freqUsed?"open":""}><summary>日によって違う →「より頻回な状況」を計算</summary><div class="bd">
-        <p class="note">過去1週間（つめ切りは1か月）に<b>その行為が発生した回数</b>を、選択肢ごとに入れてください。入浴のない日など、行為がなかった日は数えません〔P24〕。</p>
-        ${cs.map((x,i)=>`<label class="f" for="fq${i}">${i+1}.${esc(x)}</label><input type="number" inputmode="numeric" min="0" id="fq${i}" data-fq="${i}" value="${f[i]??""}">`).join("")}
-        <div class="row" style="margin-top:10px"><button class="btn" data-act="freq">計算して選ぶ</button></div>
-        <div id="fqRes"></div></div></details>`;
-    }
-  }
-  if(it.kind==="bpsd"){
-    const b=r.bp||{};
-    h += `<details open><summary>頻度から判定（過去1か月）</summary><div class="bd">
-      <div class="chk"><input type="checkbox" id="bpA" ${b.nat?"checked":""}><label for="bpA">もともとの性格・生活習慣による行動である</label></div>
-      <div class="chk"><input type="checkbox" id="bpB" ${b.fit?"checked":""}><label for="bpB">場面や目的からみて不適当な行動である（周囲の状況に合致しない）</label></div>
-      <div class="g2" style="margin-top:8px"><div><label class="f" for="bpN">回数</label><input type="number" inputmode="numeric" min="0" id="bpN" value="${b.n??""}"></div>
-      <div><label class="f" for="bpP">期間あたり</label><select class="s" id="bpP">${["週","月","日"].map(p=>`<option ${b.p===p?"selected":""}>${p}</option>`).join("")}</select></div></div>
-      <div class="row" style="margin-top:10px"><button class="btn" data-act="bpsd">判定して選ぶ</button></div>
-      <p class="note">週1回以上＝3.ある／月1回以上週1回未満＝2.ときどきある／それ未満＝1.ない〔P114〕。<b>対応や手間がなくても</b>行動があれば頻度で選ぶ〔P115〕。環境が大きく変わったら変化後の状況で。</p>
-      <div id="bpRes"></div></div></details>`;
-  }
-  if(it.c==="2-12"){
-    h += `<details open><summary>回数から判定（過去1か月）</summary><div class="bd">
-      <label class="f" for="gaN">1回おおむね30分以上、敷地の外へ出た回数（1か月）</label><input type="number" inputmode="numeric" min="0" id="gaN" value="${(r.ga??"")}">
-      <div class="row" style="margin-top:10px"><button class="btn" data-act="gai">判定して選ぶ</button></div></div></details>`;
-  }
-  if(NOACT[it.c]) h += `<details><summary>その行為が発生しないとき</summary><div class="bd"><p>${esc(NOACT[it.c])}</p></div></details>`;
-  if(it.ax==="K"){
-    const ia=r.ia||[];
-    const rs=["独居・日中独居などで介護者がおらず、適切な介助が提供されていない","介護放棄・介護抵抗のため、適切な介助が提供されていない","介護者の心身の状態から、介助が提供できない","過剰な介助が、むしろ本人の自立を妨げている"];
-    h += `<details ${r.inapp?"open":""}><summary>実際の介助が「不適切」と思うとき</summary><div class="bd">
-      ${rs.map((x,i)=>`<div class="chk"><input type="checkbox" id="ia${i}" data-ia="${i}" ${ia.includes(i)?"checked":""}><label for="ia${i}">${x}</label></div>`).join("")}
-      <p class="note">当てはまれば、理由と事実（汗疹・便の付着・転倒・医師の注意など）を特記に書き、<b>適切な介助の方法</b>を選びます。独居や老老介護<b>だけ</b>を理由にしない。確定するのは介護認定審査会〔P23・P25〕。</p></div></details>`;
-  }
-  return h;
+/* 項目画面の状態 */
+let INFO="ask", REC="tok", POP=null, POPMSG="", MORE=false;
+const RULE = {A:"できるかで選ぶ（介助や困りごとは見ない）",K:"実際にどう介助されているかで選ぶ（量ではなく方法）",U:"あったかで選ぶ（手間では選ばない）",M:"継続して行われている医療行為だけ",J:"調査時の様子から判定する"};
+
+function toolList(it){
+  const t=[];
+  if(it.ax==="A" || it.c==="1-1" || it.c==="1-2") t.push(["trial","試行と日頃が違う"]);
+  if(!isMulti(it) && (it.ax==="A"||it.ax==="K")) t.push(["freq","日によって違う"]);
+  if(it.kind==="bpsd") t.push(["bpsd","回数から判定"]);
+  if(it.c==="2-12") t.push(["gai","回数から判定"]);
+  if(NOACT[it.c]) t.push(["noact","行為がないとき"]);
+  if(it.ax==="K") t.push(["inapp","介助が不適切かも"]);
+  return t;
 }
 
-function tokHTML(it, r){
-  const t=r.tok||""; const vg=vagueIn(t);
-  return `<h3>聞き取りメモ</h3>
-    <textarea id="memo" placeholder="聞き取った内容をそのまま残す欄です（転記用まとめには入りません）。あとで特記事項に整えます。">${esc(r.memo||"")}</textarea>
-    <h3>特記事項</h3>
-    <div class="g2"><div><label class="f" for="tkS">状況（実際の様子・日頃と調査時）</label><textarea id="tkS" placeholder="例：調査時はベッド柵につかまれば起き上がれた。家族の話では、日頃は倦怠感が強い">${esc(r.s||"")}</textarea></div>
-    <div><label class="f" for="tkC">手間（誰が・何を・どれくらい）</label><textarea id="tkC" placeholder="例：家族が夜間2回起きて体を支えている">${esc(r.care||"")}</textarea></div></div>
-    <div class="g2"><div><label class="f" for="tkF">頻度（数で）</label><input type="text" id="tkF" placeholder="例：週5日程度／1日2回" value="${esc(r.f||"")}"></div>
-    <div><label class="f" for="tkR">選んだ理由</label><select class="s" id="tkR">${["","より頻回な状況から","試行の状況と日頃の状況から","定義に基づき","不適切な状況にあると判断し、適切な介助の方法として","行為が生じた場合を想定し","類似の行為で代替して評価し"].map(x=>`<option ${r.why===x?"selected":""}>${x}</option>`).join("")}</select></div></div>
-    <div class="row" style="margin-top:10px"><button class="btn o" data-act="draft">下書きを作る</button><button class="btn o" data-act="copytok">特記をコピー</button></div>
-    <label class="f" for="tok">特記事項（このまま転記できる文章）</label>
-    <textarea id="tok" style="min-height:8em">${esc(t)}</textarea>
-    <div class="note" style="margin-top:6px">定型文（タップで特記事項のカーソル位置に入ります。（　）は書き換えてください）</div>
-    <div class="tpls">${tplFor(it).map(x=>`<button data-tpl="${esc(x.id)}">${esc(x.text)}</button>`).join("") || `<span class="note">登録された定型文はありません</span>`}</div>
-    <details><summary>定型文を登録する</summary><div class="bd">
-      <label class="f" for="tplNew">登録する文</label><textarea id="tplNew" style="min-height:4em" placeholder="例：家族が夜間2回起きて介助している。"></textarea>
-      <div class="row" style="margin-top:8px"><button class="btn o" data-act="tplFromTok">特記事項の文をここに写す</button></div>
-      <div class="row" style="margin-top:8px"><button class="btn" data-act="tplAddItem">この項目（${esc(it.c.startsWith("J")||it.c==="M"?it.n:it.c)}）用に登録</button><button class="btn o" data-act="tplAddAll">全項目共通で登録</button></div>
-      <p class="note">登録した定型文は「準備・管理」で一覧・削除できます。</p></div></details>
-    ${vg.length?`<div class="warnbox">「${vg.join("・")}」は人によって受け取り方が違う言葉です。「週2回」のように数で書いてください〔P19〕。</div>`:""}
-    <p class="note">型：状況 → 頻度 → 選択（「番号.選択肢」を選択する）→ 一次判定に表れない手間。状態ではなく手間を書く〔P2〕。迷った理由も書く〔P8〕。</p>`;
+function infoHTML(it){
+  const qs=(QS[it.c]||[]).slice(); if(it.kind==="bpsd") qs.push(...QS_BPSD);
+  if(INFO==="ask"){
+    if(!qs.length) return `<p class="note" style="margin:0">この項目は調査時の様子から判断します。</p>`;
+    const show = MORE? qs : qs.slice(0,2);
+    let h=`<ul>${show.map((q,i)=>`<li class="${i===0?"q":""}">${esc(q)}</li>`).join("")}</ul>`;
+    if(qs.length>2) h+=`<button class="linkb" data-act="more">${MORE?"閉じる":`ほかの聞き方（${qs.length-2}件）`}</button>`;
+    if((it.ax==="A"&&it.g==="1")||it.c==="1-1"||it.c==="1-2") h+=`<p class="note" style="margin:6px 0 0">${esc(QS_ABILITY)}</p>`;
+    return h;
+  }
+  if(INFO==="def") return `<p style="margin:0">${esc(it.def)}</p>`;
+  return `<ul>${it.tips.map(t=>`<li>${esc(t)}</li>`).join("")}</ul>`;
 }
 
 function medHTML(r){
   const v=r.v||[]; const det=r.det||{};
-  return `<div class="choices">${MED.map((m,i)=>`<button data-med="${i}" aria-pressed="${v.includes(i)}"><span class="no">${i+1}</span><span>${esc(m)}<br><span class="note">${esc(MEDTIP[m])}</span></span></button>`).join("")}</div>
+  return `<div class="choices">${MED.map((m,i)=>`<button data-med="${i}" aria-pressed="${v.includes(i)}"><span class="no">${i+1}</span><span>${esc(m)}<span class="sub">${esc(MEDTIP[m])}</span></span></button>`).join("")}</div>
    <div class="chk" style="margin-top:8px"><input type="checkbox" id="medNone" ${r.medDone&&!v.length?"checked":""}><label for="medNone">確認した結果、該当なし</label></div>
    ${v.map(i=>{const d=det[i]||{}; return `<div class="card"><b>${esc(MED[i])}</b>
      <label class="f" for="mf${i}">実施頻度／継続性</label><input type="text" id="mf${i}" data-md="${i}" data-k="f" value="${esc(d.f||"")}" placeholder="例：1日3回、2か月前から継続">
@@ -564,25 +549,70 @@ function medHTML(r){
      <label class="f" for="my${i}">必要とする理由</label><input type="text" id="my${i}" data-md="${i}" data-k="why" value="${esc(d.why||"")}" placeholder="例：経口摂取ができないため"></div>`;}).join("")}`;
 }
 
+function popHTML(it, r){
+  const cs=choicesOf(it); const msg = POPMSG? `<div class="res" role="status">${POPMSG}</div>`:"";
+  const T={trial:"試行と日頃の状況",freq:"日によって違うとき",bpsd:"回数から判定（過去1か月）",gai:"回数から判定（過去1か月）",noact:"その行為がないとき",inapp:"介助が不適切と思うとき",draft:"特記事項の下書き",tpl:"定型文"};
+  let b="";
+  if(POP==="trial") b=`<div class="choices">${[["same","試行した。日頃も同じ"],["diff","試行した。日頃と違う"],["no","試行できなかった（危険・拒否・体調）"],["skip","調査中に同じ動作を確認できた"]].map(([k,l])=>`<button data-trial="${k}" aria-pressed="${r.trial===k}">${l}</button>`).join("")}</div>
+     <p class="note">日頃と違うときは、過去1週間で<b>より頻回な状況</b>で選びます。いちばん重い状態や、間の選択肢は選びません〔P21〕。</p>`;
+  if(POP==="freq"){ const f=r.freq||{}; b=`<p class="note">過去1週間（つめ切りは1か月）に、その行為が起きた回数を入れてください。行為がなかった日は数えません〔P24〕。</p>
+     ${cs.map((x,i)=>`<label class="f" for="fq${i}">${i+1}. ${esc(x)}</label><input type="number" inputmode="numeric" min="0" id="fq${i}" data-fq="${i}" value="${f[i]??""}">`).join("")}
+     <div class="row" style="margin-top:14px"><button class="btn" data-act="freq">計算して選ぶ</button></div>${msg}`; }
+  if(POP==="bpsd"){ const p=r.bp||{}; b=`<div class="chk"><input type="checkbox" id="bpA" ${p.nat?"checked":""}><label for="bpA">もともとの性格・生活習慣による行動</label></div>
+     <div class="chk"><input type="checkbox" id="bpB" ${p.fit?"checked":""}><label for="bpB">場面や目的からみて不適当な行動</label></div>
+     <div class="g2"><div><label class="f" for="bpN">回数</label><input type="number" inputmode="numeric" min="0" id="bpN" value="${p.n??""}"></div>
+     <div><label class="f" for="bpP">期間あたり</label><select class="s" id="bpP">${["週","月","日"].map(x=>`<option ${p.p===x?"selected":""}>${x}</option>`).join("")}</select></div></div>
+     <div class="row" style="margin-top:14px"><button class="btn" data-act="bpsd">判定して選ぶ</button></div>
+     <p class="note">週1回以上＝ある／月1回以上＝ときどきある／それ未満＝ない〔P114〕。対応や手間がなくても、行動があれば頻度で選びます。</p>${msg}`; }
+  if(POP==="gai") b=`<label class="f" for="gaN">1回30分以上、敷地の外に出た回数（1か月）</label><input type="number" inputmode="numeric" min="0" id="gaN" value="${r.ga??""}">
+     <div class="row" style="margin-top:14px"><button class="btn" data-act="gai">判定して選ぶ</button></div>${msg}`;
+  if(POP==="noact") b=`<p style="font-size:var(--fs-l)">${esc(NOACT[it.c]||"")}</p>`;
+  if(POP==="inapp"){ const ia=r.ia||[]; const rs=["介護者がいない（独居・日中独居）ため、適切な介助がない","介護放棄・介護抵抗のため、適切な介助がない","介護者の心身の状態から、介助できない","介助が多すぎて、本人の自立を妨げている"];
+     b=rs.map((x,i)=>`<div class="chk"><input type="checkbox" id="ia${i}" data-ia="${i}" ${ia.includes(i)?"checked":""}><label for="ia${i}">${x}</label></div>`).join("")+
+     `<p class="note">当てはまるときは、<b>適切な介助の方法</b>を選び、理由と事実（汗疹・便の付着・転倒など）を特記事項に書きます。独居や老老介護だけを理由にしません。確定するのは審査会です〔P23・P25〕。</p>`; }
+  if(POP==="draft") b=`<p class="note">分かるところだけ入れてください。型は「状況 → 頻度 → 選択 → 手間」です。</p>
+     <label class="f" for="tkS">状況（日頃の様子・調査時の様子）</label><textarea id="tkS" placeholder="例：調査時は柵につかまれば起き上がれた。家族の話では日頃は倦怠感が強い">${esc(r.s||"")}</textarea>
+     <label class="f" for="tkF">頻度（数で）</label><input type="text" id="tkF" placeholder="例：週5日程度" value="${esc(r.f||"")}">
+     <label class="f" for="tkC">手間（誰が・何を・どれくらい）</label><textarea id="tkC" style="min-height:4.5em" placeholder="例：家族が夜間2回起きて体を支えている">${esc(r.care||"")}</textarea>
+     <label class="f" for="tkR">選んだ理由</label><select class="s" id="tkR">${["","より頻回な状況から","試行の状況と日頃の状況から","定義に基づき","不適切な状況にあると判断し、適切な介助の方法として","行為が生じた場合を想定し","類似の行為で代替して評価し"].map(x=>`<option ${r.why===x?"selected":""} value="${x}">${x||"（なし）"}</option>`).join("")}</select>
+     <div class="row" style="margin-top:14px"><button class="btn" data-act="draft">特記事項に入れる</button></div>
+     <p class="note">今の特記事項は、作った下書きで置き換わります。</p>`;
+  if(POP==="tpl") b=`<p class="note">押すと特記事項に入ります。（　）は書き換えてください。</p>
+     <div class="tpls">${tplFor(it).map(x=>`<button data-tpl="${esc(x.id)}">${esc(x.text)}</button>`).join("") || `<p class="note">登録された定型文はありません。</p>`}</div>
+     <h3>新しく登録する</h3><textarea id="tplNew" style="min-height:4.5em" placeholder="例：家族が夜間2回起きて介助している。"></textarea>
+     <div class="acts"><button class="btn o s" data-act="tplFromTok">特記事項の文を写す</button></div>
+     <div class="acts"><button class="btn s" data-act="tplAddItem">この項目用に登録</button><button class="btn o s" data-act="tplAddAll">全項目共通で登録</button></div>`;
+  return `<div class="pop" data-act="popbg"><div class="pbox" role="dialog" aria-label="${T[POP]}"><div class="phead"><b>${T[POP]}</b><button class="ghost" data-act="popclose">閉じる</button></div><div class="pbody">${b}</div></div></div>`;
+}
+
 function renderSheet(){
   const old=$(".sheet"); if(old) old.remove();
   if(!OPEN) return;
   const it=BYC[OPEN]; const r=rec(OPEN); const cs=choicesOf(it);
-  const list=ALL; const idx=list.findIndex(x=>x.c===OPEN);
+  const idx=ALL.findIndex(x=>x.c===OPEN);
   const s=document.createElement("div"); s.className="sheet"; s.setAttribute("role","dialog"); s.setAttribute("aria-label",it.n);
-  let body="";
-  if(it.kind==="med") body = medHTML(r);
-  else body = `<div class="choices">${cs.map((x,i)=>{ const on = isMulti(it) ? (r.v||[]).includes(i) : r.v===i+1; return `<button data-ch="${i}" aria-pressed="${on}"><span class="no">${i+1}.</span><span>${esc(x)}</span></button>`;}).join("")}</div>${isMulti(it)?`<p class="note">部位は複数選べます。「ない」を選ぶとほかは外れます。</p>`:""}`;
-  s.innerHTML = `<div class="bar"><button data-act="close">← 一覧</button><span class="t">${it.c.startsWith("J")||it.c==="M"?"":esc(it.c)+" "}${esc(it.n)}</span><button data-act="prev" ${idx<=0?"disabled":""} aria-label="前の項目">↑</button><button data-act="next" ${idx>=list.length-1?"disabled":""} aria-label="次の項目">↓</button></div>
-    <div class="in">
-      <div class="meta"><span class="ax ${it.ax}">${AXN[it.ax]}</span><span>期間：${esc(it.per)}</span>${it.ax==="A"?"<span>できるか（介助や支障は見ない）</span>":it.ax==="K"?"<span>実際にどう介助されているか（量ではなく方法）</span>":it.ax==="U"?"<span>あったか（手間では選ばない）</span>":""}</div>
-      <div class="def">${esc(it.def)}</div>
-      ${body}
-      ${(QS[it.c]||it.kind==="bpsd")?`<details open><summary>聞き方の例</summary><div class="bd"><ul class="tips">${(QS[it.c]||[]).map(q=>`<li>${esc(q)}</li>`).join("")}${it.kind==="bpsd"?QS_BPSD.map(q=>`<li class="note">${esc(q)}</li>`).join(""):""}${(it.ax==="A"&&it.g==="1")||it.c==="1-1"||it.c==="1-2"?`<li class="note">${esc(QS_ABILITY)}</li>`:""}</ul></div></details>`:""}
-      <details><summary>つまずきやすい点</summary><div class="bd"><ul class="tips">${it.tips.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div></details>
-      ${helperHTML(it,r)}
-      ${tokHTML(it,r)}
-    </div>`;
+  const body = it.kind==="med" ? medHTML(r) : `<div class="choices" role="group" aria-label="選択肢">${cs.map((x,i)=>{ const on = isMulti(it) ? (r.v||[]).includes(i) : r.v===i+1; return `<button data-ch="${i}" aria-pressed="${on}"><span class="no">${i+1}</span><span>${esc(x)}</span></button>`;}).join("")}</div>${isMulti(it)?`<p class="note">部位は複数選べます。「ない」を選ぶと、ほかは外れます。</p>`:""}`;
+  const tools=toolList(it);
+  const vg=vagueIn(r.tok||"");
+  const grp = it.g==="M"?"その他":it.g==="J"?"日常生活自立度":`第${it.g}群`;
+  s.innerHTML = `<div class="sbar"><button class="ghost" data-act="close">← 一覧へ</button><span class="sp">${idx+1} / ${ALL.length}</span></div>
+   <div class="sscroll"><div class="sin">
+    <div class="ihead"><div class="ic">${it.c.startsWith("J")||it.c==="M"?grp:`${esc(it.c)}　${grp}`}</div><h2>${esc(it.n)}</h2>
+      <div class="rule"><span class="ax ${it.ax}">${AXN[it.ax]}</span><span>${RULE[it.ax]}</span><span>期間：${esc(it.per)}</span></div></div>
+    ${body}
+    <div class="seg" role="tablist" aria-label="補足">${[["ask","聞き方"],["def","定義"],["tip","注意点"]].map(([k,l])=>`<button role="tab" data-info="${k}" aria-selected="${INFO===k}">${l}</button>`).join("")}</div>
+    <div class="panel" role="tabpanel">${infoHTML(it)}</div>
+    ${tools.length?`<div class="tools"><div class="tl">迷ったとき</div><div class="row">${tools.map(([k,l])=>`<button data-pop="${k}" class="${(k==="trial"&&r.trial)||(k==="freq"&&r.freqUsed)||(k==="inapp"&&r.inapp)?"on":""}">${l}</button>`).join("")}</div></div>`:""}
+    <div class="rec">
+      <div class="seg" role="tablist" aria-label="記録">${[["tok","特記事項"],["memo","聞き取りメモ"]].map(([k,l])=>`<button role="tab" data-rec="${k}" aria-selected="${REC===k}">${l}${k==="tok"&&r.tok?"　●":""}${k==="memo"&&r.memo?"　●":""}</button>`).join("")}</div>
+      ${REC==="tok"?`<textarea id="tok" aria-label="特記事項" placeholder="このまま調査票に転記できる文章を書きます。下の「下書きを作る」や「定型文」も使えます。">${esc(r.tok||"")}</textarea>
+        ${vg.length?`<div class="warnbox">「${vg.join("・")}」は人によって受け取り方が違います。「週2回」のように数で書いてください〔P19〕。</div>`:""}
+        <div class="acts"><button class="btn o s" data-pop="draft">下書きを作る</button><button class="btn o s" data-pop="tpl">定型文</button><button class="btn o s" data-act="copytok">コピー</button></div>`
+       :`<textarea id="memo" aria-label="聞き取りメモ" placeholder="聞き取った内容をそのまま残します（転記用まとめには入りません）。">${esc(r.memo||"")}</textarea>`}
+    </div>
+   </div></div>
+   <div class="sfoot"><button class="btn o" data-act="prev" ${idx<=0?"disabled":""}>← 前へ</button><button class="btn" data-act="next" ${idx>=ALL.length-1?"disabled":""}>次の項目へ →</button></div>
+   ${POP?popHTML(it,r):""}`;
   document.body.appendChild(s);
   bindSheet(s, it);
 }
@@ -672,75 +702,77 @@ function setV(code, v){ rec(code).v=v; save(); }
 
 function bindSheet(s, it){
   const r=rec(it.c);
+  const sel = (v)=>{ r.v=v; save(); renderHeader(); };
   s.addEventListener("click", e=>{
+    if(e.target.classList && e.target.classList.contains("pop")){ POP=null; POPMSG=""; refreshSheet(); return; }
     const b=e.target.closest("button"); if(!b) return;
     if(b.dataset.ch!=null){
       const i=+b.dataset.ch;
-      if(isMulti(it)){ let v=r.v||[]; if(i===0) v=[0]; else { v=v.filter(x=>x!==0); v=v.includes(i)?v.filter(x=>x!==i):v.concat(i).sort((a,b)=>a-b); } r.v=v; }
-      else r.v=i+1;
-      save(); renderHeader(); refreshSheet(); return;
+      if(isMulti(it)){ let v=r.v||[]; if(i===0) v=[0]; else { v=v.filter(x=>x!==0); v=v.includes(i)?v.filter(x=>x!==i):v.concat(i).sort((a,b)=>a-b); } sel(v); }
+      else sel(i+1);
+      refreshSheet(); return;
     }
-    if(b.dataset.med!=null){ const i=+b.dataset.med; let v=r.v||[]; v=v.includes(i)?v.filter(x=>x!==i):v.concat(i).sort((a,b)=>a-b); r.v=v; r.medDone=true; save(); renderHeader(); refreshSheet(); return; }
+    if(b.dataset.med!=null){ const i=+b.dataset.med; let v=r.v||[]; v=v.includes(i)?v.filter(x=>x!==i):v.concat(i).sort((a,b)=>a-b); r.medDone=true; sel(v); refreshSheet(); return; }
+    if(b.dataset.info){ INFO=b.dataset.info; MORE=false; refreshSheet(); return; }
+    if(b.dataset.rec){ REC=b.dataset.rec; refreshSheet(); return; }
+    if(b.dataset.pop){ POP=b.dataset.pop; POPMSG=""; refreshSheet(); return; }
+    if(b.dataset.trial){ r.trial = r.trial===b.dataset.trial?null:b.dataset.trial; if(r.trial==="diff" && !r.why) r.why="より頻回な状況から"; save(); refreshSheet(); return; }
     if(b.dataset.tpl){
       const tp=(DB.tpl||[]).find(x=>x.id===b.dataset.tpl); if(!tp) return;
-      const ta=s.querySelector("#tok"); const v=ta.value; const p=(typeof CARET==="number" && CARET<=v.length)?CARET:v.length;
-      ta.value=v.slice(0,p)+tp.text+v.slice(p); readTok(s,r); save(); renderHeader(); refreshSheet();
-      const n=$(".sheet #tok"); const q=p+tp.text.length; CARET=q; if(n){ n.focus(); try{ n.setSelectionRange(q,q); }catch(e){} }
-      return;
+      const v=r.tok||""; const p=(typeof CARET==="number" && CARET<=v.length)?CARET:v.length;
+      r.tok=v.slice(0,p)+tp.text+v.slice(p); CARET=p+tp.text.length; save(); renderHeader();
+      POP=null; REC="tok"; refreshSheet(); toast("定型文を入れました"); return;
     }
-    if(b.dataset.act==="tplFromTok"){ const ta=s.querySelector("#tok"); const nb=s.querySelector("#tplNew"); nb.value=ta.value; nb.focus(); return; }
-    if(b.dataset.act==="tplAddItem" || b.dataset.act==="tplAddAll"){
-      const txt=s.querySelector("#tplNew").value.trim(); if(!txt){ toast("登録する文を入れてください"); return; }
-      DB.tpl=DB.tpl||[]; DB.tpl.push({id:"u"+Date.now(), code:b.dataset.act==="tplAddAll"?"":it.c, text:txt});
-      readTok(s,r); save(); refreshSheet(); toast("定型文を登録しました"); return;
-    }
-    if(b.dataset.trial){ r.trial = r.trial===b.dataset.trial?null:b.dataset.trial; if(r.trial==="diff" && !r.why) r.why="より頻回な状況から"; if(r.trial==="diff"||r.trial==="same"||r.trial==="no") {} save(); refreshSheet(); return; }
     const a=b.dataset.act;
-    if(a==="close"){ OPEN=null; CARET=null; render(); return; }
-    if(a==="prev"||a==="next"){ const i=ALL.findIndex(x=>x.c===it.c); const n=ALL[i+(a==="next"?1:-1)]; if(n){ OPEN=n.c; GF=n.g; CARET=null; render(); } return; }
+    if(a==="popclose"){ POP=null; POPMSG=""; refreshSheet(); return; }
+    if(a==="more"){ MORE=!MORE; refreshSheet(); return; }
+    if(a==="close"){ OPEN=null; POP=null; CARET=null; render(); return; }
+    if(a==="prev"||a==="next"){ const i=ALL.findIndex(x=>x.c===it.c); const n=ALL[i+(a==="next"?1:-1)]; if(n){ OPEN=n.c; GF=n.g; POP=null; CARET=null; MORE=false; render(); const sc=$(".sheet .sscroll"); if(sc) sc.scrollTop=0; } return; }
     if(a==="freq"){
       const cs=choicesOf(it); const f={}; let tot=0;
       s.querySelectorAll("[data-fq]").forEach(x=>{ const n=parseInt(x.value,10); if(!isNaN(n)&&n>0){ f[x.dataset.fq]=n; tot+=n; } });
       r.freq=f; const ent=Object.entries(f).sort((a,b)=>b[1]-a[1]);
-      const box=s.querySelector("#fqRes");
-      if(!ent.length){ box.innerHTML=`<div class="warnbox">回数を入れてください。</div>`; return; }
-      if(ent.length>1 && ent[0][1]===ent[1][1]){ box.innerHTML=`<div class="warnbox">回数が同じ選択肢があります（${ent.filter(e=>e[1]===ent[0][1]).map(e=>cs[e[0]]).join("・")}）。日頃の状況を聞き取り、迷った理由を特記して審査会の判断を仰いでください〔P8・P22〕。</div>`; save(); return; }
-      const best=+ent[0][0]; r.v=best+1; r.freqUsed=ent.length>1; r.why= r.freqUsed?"より頻回な状況から":(r.why||"");
-      if(r.freqUsed && !r.f) r.f = ent.map(e=>`${cs[e[0]]}${e[1]}回`).join("、")+`（計${tot}回）`;
-      save(); renderHeader(); refreshSheet();
-      s.querySelector("#fqRes").innerHTML=`<div class="res">「${best+1}.${esc(cs[best])}」を選びました（${ent[0][1]}/${tot}回）。${r.freqUsed?"頻回でない側の場面と頻度を特記に書き、事務局にも伝えます。":""}</div>`;
-      return;
+      if(!ent.length){ POPMSG="回数を入れてください。"; save(); refreshSheet(); return; }
+      if(ent.length>1 && ent[0][1]===ent[1][1]){ POPMSG=`回数が同じ選択肢があります（${ent.filter(e=>e[1]===ent[0][1]).map(e=>esc(cs[e[0]])).join("・")}）。日頃の状況を聞き取り、迷った理由を特記して審査会の判断を仰いでください。`; save(); refreshSheet(); return; }
+      const best=+ent[0][0]; r.freqUsed=ent.length>1; if(r.freqUsed){ r.why="より頻回な状況から"; if(!r.f) r.f=ent.map(e=>`${cs[e[0]]}${e[1]}回`).join("、")+`（計${tot}回）`; }
+      sel(best+1);
+      POPMSG=`「${best+1}. ${esc(cs[best])}」を選びました（${ent[0][1]} / ${tot}回）。${r.freqUsed?"頻回でない側の場面と頻度を特記事項に書き、事務局にも伝えます。":""}`;
+      refreshSheet(); return;
     }
     if(a==="bpsd"){
       const n=parseFloat(s.querySelector("#bpN").value); const p=s.querySelector("#bpP").value;
       const nat=s.querySelector("#bpA").checked, fit=s.querySelector("#bpB").checked;
       r.bp={n:isNaN(n)?null:n,p,nat,fit};
-      const box=s.querySelector("#bpRes");
-      if(nat && !fit){ r.v=1; save(); renderHeader(); refreshSheet(); s.querySelector("#bpRes").innerHTML=`<div class="res">性格・習慣による行動なので「1.ない」を選びました。手間があれば特記に書きます。</div>`; return; }
-      if(isNaN(n)){ box.innerHTML=`<div class="warnbox">回数を入れてください（0回なら0）。</div>`; return; }
-      const v=bpsdChoice(n,p); r.v=v; if(!r.f && n>0) r.f=`${p}${n}回程度`;
-      save(); renderHeader(); refreshSheet();
-      s.querySelector("#bpRes").innerHTML=`<div class="res">「${v}.${CH.BP[v-1]}」を選びました。${v>1?"対応の内容と頻度（対応していなければそのこと）を特記に書きます。":""}</div>`;
-      return;
+      if(nat && !fit){ sel(1); POPMSG="性格・習慣による行動なので「1. ない」を選びました。手間があれば特記事項に書きます。"; refreshSheet(); return; }
+      if(isNaN(n)){ POPMSG="回数を入れてください（なければ0）。"; save(); refreshSheet(); return; }
+      const v=bpsdChoice(n,p); if(!r.f && n>0) r.f=`${p}${n}回程度`; sel(v);
+      POPMSG=`「${v}. ${CH.BP[v-1]}」を選びました。${v>1?"対応の内容と頻度（対応していなければそのこと）を特記事項に書きます。":""}`;
+      refreshSheet(); return;
     }
-    if(a==="gai"){ const n=parseInt(s.querySelector("#gaN").value,10); if(isNaN(n)){toast("回数を入れてください");return;} r.ga=n; r.v=gaiChoice(n); save(); renderHeader(); refreshSheet(); return; }
+    if(a==="gai"){ const n=parseInt(s.querySelector("#gaN").value,10); if(isNaN(n)){ POPMSG="回数を入れてください。"; refreshSheet(); return; } r.ga=n; const v=gaiChoice(n); sel(v); POPMSG=`「${v}. ${CH.GA[v-1]}」を選びました。`; refreshSheet(); return; }
     if(a==="draft"){
-      readTok(s,r); const cs=choicesOf(it);
-      const sel = it.kind==="med" ? "" : isMulti(it) ? (r.v||[]).map(i=>`「${i+1}.${cs[i]}」`).join("") : (r.v?`「${r.v}.${cs[r.v-1]}」`:"「（未選択）」");
+      readDraft(s,r); const cs=choicesOf(it);
+      const selT = it.kind==="med" ? "" : isMulti(it) ? (r.v||[]).map(i=>`「${i+1}.${cs[i]}」`).join("") : (r.v?`「${r.v}.${cs[r.v-1]}」`:"「（未選択）」");
       let t=`（${it.c.startsWith("J")?it.n:it.c==="M"?"特別な医療":it.c}）`;
       if(r.s) t+=r.s.replace(/[。．]?$/,"。");
       if(r.f) t+=`頻度は${r.f}。`;
-      if(sel) t+=`${r.why?r.why:""}${sel}を選択する。`;
+      if(selT) t+=`${r.why||""}${selT}を選択する。`;
       if(r.care) t+=r.care.replace(/[。．]?$/,"。");
-      if(it.kind==="bpsd" && r.v>=2 && !r.care) t+="（対応していない場合は「特に対応はしていない」と書く）";
-      r.tok=t; save(); refreshSheet(); toast("下書きを作りました。必要に応じて直してください"); return;
+      else if(it.kind==="bpsd" && r.v>=2) t+="（対応の内容、対応していなければそのことを書く）";
+      r.tok=t; save(); renderHeader(); POP=null; REC="tok"; refreshSheet(); toast("下書きを入れました。必要に応じて直してください"); return;
     }
-    if(a==="copytok"){ readTok(s,r); save(); copy(r.tok||"", s.querySelector("#tok")); return; }
+    if(a==="copytok"){ copy(r.tok||"", s.querySelector("#tok")); return; }
+    if(a==="tplFromTok"){ const nb=s.querySelector("#tplNew"); nb.value=r.tok||""; nb.focus(); return; }
+    if(a==="tplAddItem" || a==="tplAddAll"){
+      const txt=s.querySelector("#tplNew").value.trim(); if(!txt){ toast("登録する文を入れてください"); return; }
+      DB.tpl=DB.tpl||[]; DB.tpl.push({id:"u"+Date.now(), code:a==="tplAddAll"?"":it.c, text:txt}); save(); refreshSheet(); toast("定型文を登録しました"); return;
+    }
   });
   s.addEventListener("input", e=>{
     const x=e.target;
     if(x.id==="memo"){ r.memo=x.value; save(); return; }
-    if(["tkS","tkC","tkF","tkR","tok"].includes(x.id)){ readTok(s,r); save(); renderHeader(); if(x.id==="tok"){ const w=s.querySelector(".warnbox.vg"); } return; }
+    if(x.id==="tok"){ r.tok=x.value; save(); renderHeader(); return; }
+    if(["tkS","tkC","tkF","tkR"].includes(x.id)){ readDraft(s,r); save(); return; }
     if(x.dataset.md!=null){ const i=x.dataset.md; r.det=r.det||{}; r.det[i]=r.det[i]||{}; r.det[i][x.dataset.k]=x.value; save(); renderHeader(); return; }
   });
   s.addEventListener("change", e=>{
@@ -752,8 +784,16 @@ function bindSheet(s, it){
 }
 let CARET=null; /* 特記事項欄で最後にカーソルがあった位置（未操作なら末尾に追加） */
 ["keyup","click","select","input"].forEach(ev=>document.addEventListener(ev, e=>{ if(e.target && e.target.id==="tok") CARET=e.target.selectionStart; }));
-function readTok(s,r){ const g=id=>{const e=s.querySelector("#"+id); return e?e.value:undefined;}; r.s=g("tkS")??r.s; r.care=g("tkC")??r.care; r.f=g("tkF")??r.f; r.why=g("tkR")??r.why; const t=g("tok"); if(t!==undefined) r.tok=t; }
-function refreshSheet(){ const s=$(".sheet"); const y=s?s.scrollTop:0; const ae=document.activeElement&&document.activeElement.id; renderSheet(); const n=$(".sheet"); if(n){ n.scrollTop=y; if(ae){ const el=n.querySelector("#"+ae); if(el&&el.tagName!=="BUTTON") el.focus(); } } }
+function readDraft(s,r){ const g=id=>{const e=s.querySelector("#"+id); return e?e.value:undefined;}; r.s=g("tkS")??r.s; r.care=g("tkC")??r.care; r.f=g("tkF")??r.f; r.why=g("tkR")??r.why; }
+function refreshSheet(){
+  const sc=$(".sheet .sscroll"), y=sc?sc.scrollTop:0;
+  const pb=$(".sheet .pbody"), py=pb?pb.scrollTop:0;
+  const ae=document.activeElement&&document.activeElement.id;
+  renderSheet();
+  const n=$(".sheet .sscroll"); if(n) n.scrollTop=y;
+  const p=$(".sheet .pbody"); if(p) p.scrollTop=py;
+  if(ae){ const el=$(".sheet #"+ae); if(el&&el.tagName!=="BUTTON") el.focus(); }
+}
 
 document.addEventListener("click", e=>{
   const b=e.target.closest("button"); if(!b || b.closest(".sheet") || b.closest(".modal")) return;
