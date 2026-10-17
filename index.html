@@ -145,6 +145,25 @@ pre.out{white-space:pre-wrap;word-break:break-all;background:var(--surface);bord
 .tplrow button{flex:0 0 auto;min-height:40px;border:1px solid var(--bad);color:var(--bad);background:var(--surface);border-radius:var(--r-s);padding:4px 12px;font-size:var(--fs-s)}
 .tpls{display:flex;flex-direction:column;gap:8px;margin-top:8px}
 .tpls button{min-height:48px;border:1px solid var(--line);background:var(--surface);border-radius:var(--r-s);padding:8px 14px;text-align:left;font-size:var(--fs-m)}
+/* かんたんモード */
+.guide h2{font-size:var(--fs-l)}
+.steps{margin:0 0 14px;padding-left:1.4em}
+.steps li{margin:6px 0}
+.btn.big{width:100%;min-height:56px;font-size:var(--fs-l)}
+.wiz{background:var(--surface);border:2px solid var(--primary);border-radius:var(--r-l);padding:18px 16px;margin-top:16px}
+.wq{font-size:var(--fs-xl);font-weight:700;line-height:1.5}
+.yn{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.yn .btn{min-height:64px;font-size:var(--fs-xl)}
+.result{background:var(--primary-soft);border-radius:var(--r-l);padding:16px;margin-top:16px}
+.result .rl{font-size:var(--fs-s);color:var(--sub);font-weight:700}
+.result .rv{font-size:var(--fs-xl);font-weight:700;margin-top:4px}
+.hint{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);padding:12px 14px;margin:16px 0 0;font-size:var(--fs-m)}
+details.direct,details.ask{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);margin-top:12px}
+details.direct>summary,details.ask>summary{padding:12px 14px;font-weight:700;min-height:48px;cursor:pointer}
+details.direct .choices{padding:0 12px 12px;margin-top:0}
+details.ask .bd{padding:0 14px 12px}
+details.ask .q{font-size:var(--fs-l);margin:0 0 6px}
+.card.ez{margin-top:20px}
 /* 下から出るパネル */
 .pop{position:fixed;inset:0;z-index:15;background:rgba(10,12,16,.5);display:flex;align-items:flex-end;justify-content:center}
 .pbox{background:var(--bg);width:100%;max-width:720px;max-height:88vh;border-radius:var(--r-l) var(--r-l) 0 0;display:flex;flex-direction:column}
@@ -168,10 +187,10 @@ pre.out{white-space:pre-wrap;word-break:break-all;background:var(--surface);bord
 <main class="wrap" id="main"></main>
 
 <nav class="tabs" role="tablist">
-  <button role="tab" data-tab="items" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>項目</button>
-  <button role="tab" data-tab="check" class="badge" id="tabCheck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg>チェック</button>
+  <button role="tab" data-tab="items" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>調査</button>
+  <button role="tab" data-tab="check" class="badge" id="tabCheck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg>見直し</button>
   <button role="tab" data-tab="out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h8"/></svg>まとめ</button>
-  <button role="tab" data-tab="prep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>準備・管理</button>
+  <button role="tab" data-tab="prep"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>設定</button>
 </nav>
 
 <script>
@@ -377,7 +396,7 @@ function cur(){ return DB.cases.find(c=>c.id===DB.cur) || null; }
 function rec(code){ const c=cur(); if(!c) return {}; return c.r[code] || (c.r[code]={}); }
 
 function sampleCase(){
-  return {id:"例-001", sample:true, date:new Date().toISOString().slice(0,10), memo:"操作を試すための見本です。実際の調査には「準備・管理」から新しい番号で作成してください。",
+  return {id:"例-001", sample:true, date:new Date().toISOString().slice(0,10), memo:"操作を試すための見本です。実際の調査には「設定」から新しい番号で作成してください。",
     pre:{}, r:{
       "1-1":{v:[1]}, "1-3":{v:2, tok:"（1-3）調査時はベッド柵につかまれば自力で寝返りができた。家族の話では週1回程度めまいがひどい日があり、その日は何かにつかまってもできない。より頻回な状況から「2.何かにつかまればできる」を選択する。"},
       "1-7":{v:3}, "2-2":{v:1, tok:"（2-2）歩行はできないが、車いすを自分でこいで移動しており介助は行われていない。"},
@@ -492,12 +511,13 @@ function renderHeader(){
 
 function renderItems(){
   const c=cur();
-  if(!c) return `<p>調査がありません。「準備・管理」から作成してください。</p>`;
-  let h = c.sample? `<div class="sample">見本の調査です。実際の調査は「準備・管理」から番号で作成してください。</div>`:"";
+  if(!c) return `<p>調査がありません。「設定」から作成してください。</p>`;
+  let h = c.sample? `<div class="sample">見本の調査です。実際の調査は「設定」から番号で作成してください。</div>`:"";
   const st = itemStates();
   const gk = c.gk||{}; const gkN = GK_FIELDS.filter(f=>gk[f[0]]).length;
   h += `<div class="chips" role="toolbar" aria-label="群の切り替え"><button data-gf="G" aria-pressed="${GF==="G"}">概況 ${gkN}/${GK_FIELDS.length}</button>${GROUPS.map(([k,l])=>{ const its=ALL.filter(x=>x.g===k); const d=its.filter(x=>done(x,c.r[x.c]||{})).length; const bad=its.filter(x=>st[x.c]==="err"||st[x.c]==="need").length; return `<button data-gf="${k}" aria-pressed="${GF===k}">${l} ${d}/${its.length}${bad?`<span class="cnt">${bad}</span>`:""}</button>`;}).join("")}</div>`;
   if(GF==="G") return h + renderGaikyo(c);
+  if(DB.mode!=="detail") h = easyHome() + h;
   h += `<div class="legend"><span>未選択</span><span class="l1">入力済み</span><span class="l2">特記が未記入</span><span class="l3">要確認</span></div><div class="list">`;
   ALL.filter(x=>x.g===GF).forEach(it=>{
     const r=c.r[it.c]||{}; const vt=valText(it,r); const s=st[it.c];
@@ -585,9 +605,157 @@ function popHTML(it, r){
   return `<div class="pop" data-act="popbg"><div class="pbox" role="dialog" aria-label="${T[POP]}"><div class="phead"><b>${T[POP]}</b><button class="ghost" data-act="popclose">閉じる</button></div><div class="pbody">${b}</div></div></div>`;
 }
 
+/* ===== かんたんモード：はい／いいえで答えると選択肢が決まる ===== */
+const ACT = {
+ "1-3":"寝返り（寝たまま、左右どちらかに体の向きを変える）","1-4":"起き上がり（寝た姿勢から上半身を起こす）",
+ "1-6":"10秒くらい立っていること","1-7":"5mくらい続けて歩くこと（途中で座り込まない）","1-8":"いすやベッドから立ち上がること","1-9":"片足を上げて1秒くらい立つこと",
+ "1-10":"お風呂で体を洗うこと","1-11":"つめ切り（この1か月）","2-1":"ベッド・いす・車いすへの乗り移り","2-2":"家の中の移動（トイレや食堂へ行く。外出はふくまない）",
+ "2-4":"食事（配られた食器から口に運ぶまで）","2-5":"おしっこ（トイレでの動作・後始末・パッド交換）","2-6":"便（トイレでの動作・後始末）","2-7":"歯みがき（準備やうがいもふくむ）",
+ "2-8":"顔を洗うこと","2-9":"髪をとかすこと","2-10":"上着の着替え","2-11":"ズボン・パンツの着替え","5-1":"薬を飲むこと（薬と水の用意・口に入れる）",
+ "5-2":"お金の管理（いくらあって、いくら使ったかを把握する）","5-5":"買い物（品物を選ぶ・お金を払う）","5-6":"ご飯を炊く・おかずを温める・即席めんを作る"
+};
+const YNQ = {
+ "3-2":["1日の流れ（起きる・食べる・寝る）を、だいたい答えられましたか？","時間がきっちりでなくても大丈夫です。"],
+ "3-3":["生年月日か年齢のどちらかを答えられましたか？","年齢は2歳までのずれ、生年月日は数日のずれならOKです。数え年でもOK。"],
+ "3-4":["少し前（調査の直前）にしていたことを答えられましたか？","難しければ、ペン・時計・視力確認表を見せてしまい、5分後に2つを見せて「なかった1つ」を聞きます。"],
+ "3-5":["自分の名前（名字か名前）を言えましたか？","旧姓でもOKです。"],
+ "3-6":["今の季節を答えられましたか？","月日が言えても、季節が言えなければ「いいえ」です。"],
+ "3-7":["今いる場所が、自宅か施設かを答えられましたか？","施設の名前や住所までは要りません。"]
+};
+const PLAIN = { /* 説明つきで選ぶ項目の、選択肢ごとのやさしい説明 */
+ SI:["新聞や雑誌の字が見える","1mくらい離れた確認表の絵が見える","目の前に置けば確認表の絵が見える","ほとんど見えない","見えているのか分からない（意思疎通ができない）"],
+ CH:["ふつうに聞こえる","ふつうの声がやっと聞こえる","大きな声なら何とか聞こえる（耳元の物音に反応するもここ）","ほとんど聞こえない","聞こえているのか分からない（意思疎通ができない）"],
+ IS:["だれにでも伝えられる（内容が少し変でもOK）","家族には伝えられるが、伝わらない時もある","「痛い」「お腹がすいた」など、限られたことだけ伝えられる","まったく伝えられない"],
+ KE:["治療やケアのことも、自分で決められる","服やテレビなど、毎日のことは自分で決められる","毎日のこともほとんど決められない（テレビなどをたまに決める）","まったく決められない"],
+ SH:["障害はない","一人で電車やバスを使って出かける","一人で近所なら出かける","家の中はだいたい自分でできる。付き添いがあれば出かけ、日中はほとんど起きている","家の中はだいたい自分でできるが、あまり出かけず、寝たり起きたり","日中もベッドで過ごすことが多いが、自分で車いすに乗り移れる","日中もベッドで過ごすことが多く、車いすへの乗り移りに手伝いが要る","1日中ベッドで過ごすが、自分で寝返りはできる","1日中ベッドで過ごし、寝返りもできない"],
+ NI:["認知症はない","認知症はあるが、ほぼ自分で生活できている","家の外で、道に迷う・買い物や金銭管理のミスがあるが、だれかが気をつけていれば生活できる","家の中でも、薬の管理ができない・留守番ができないなどがあるが、だれかが気をつけていれば生活できる","日中を中心に、介護が必要な症状や行動がある","夜間を中心に、介護が必要な症状や行動がある","介護が必要な症状や行動がひんぱんにあり、いつも介護が必要","激しい症状や行動があり、専門の医療が必要"]
+};
+/* 質問の流れ：[質問, 補足, はいの行き先, いいえの行き先]。行き先が数字なら選択肢の番号、"sN"なら次の質問 */
+function flowOf(it){
+  const a=ACT[it.c]||it.n;
+  if(it.ch==="A3") return [["ふだん、"+a+"が、何にもつかまらずにできますか？","声をかければ自分でできる場合も「はい」。体を支える目的でなく、くせで手をつくだけなら「はい」。",1,"s1"],
+                           ["柵・手すり・杖・壁、または自分の膝や服につかまれば、自分でできますか？","人に支えてもらう・最後だけ手伝ってもらう場合は「いいえ」。",2,3]];
+  if(it.ch==="S3") return [["ふだん、"+a+"が、何にもつかまらずにできますか？","",1,"s1"],
+                           ["手すりや杖、自分の膝などにつかまればできますか？","人に支えてもらわないとできない場合は「いいえ」。",2,3]];
+  if(it.ch==="ZA") return [["背もたれなしで、10分くらい座っていられますか？","ふだんソファーにもたれていても、もたれずに座れるなら「はい」。食事や入浴のときの姿勢が参考になります。",1,"s1"],
+                           ["自分の手で、座面や柵を支えれば座っていられますか？","",2,"s2"],
+                           ["背もたれやクッション、人に支えてもらえば座っていられますか？","「いいえ」は、背もたれがあっても座れない場合（長いあいだ寝たきり・医師から止められている など）。",3,4]];
+  if(it.ch==="K4") return [["この1週間、"+a+"で、だれかが手伝っていますか？","そばで見守る・声をかけるだけでも「はい」。ただし、離れた所からときどき様子を見るだけなら「いいえ」。"+(it.c==="2-5"||it.c==="2-6"?"トイレに行くタイミングを知らせる声かけも「はい」。":""),"s1",1],
+                           ["手伝いは「そばで見ている・声をかける・確認する」だけですか？","体に触れたり、代わりにやったりしていなければ「はい」。",2,"s2"],
+                           ["本人が自分でしている部分もありますか？","一部だけ手伝っている → はい／全部を手伝っている → いいえ",3,4]];
+  if(it.ch==="K3") return [["この1週間"+(it.c==="1-11"?"（つめ切りは1か月）":"")+"、"+a+"で、だれかが手伝っていますか？","見守り・声かけ・確認だけでも「はい」。薬局で分けてもらった薬は手伝いに入りません（家族が分けていれば入ります）。","s1",1],
+                           ["本人が自分でしている部分もありますか？","見守りや確認だけの場合も「はい」。全部を手伝っている（やり直しもふくむ）場合は「いいえ」。",2,3]];
+  if(it.ch==="SN") return [["この1週間、お風呂で体を洗いましたか？","体をふく（清拭）だけの場合は「いいえ」。","s1",4],
+                           ["体を洗うとき、だれかが手伝っていますか？","見守りだけでも「はい」。","s2",1],
+                           ["本人が自分で洗っている部分もありますか？","本人が洗った所も全部洗い直している場合は「いいえ」。",2,3]];
+  if(it.ch==="BP") return [["この1か月に、「"+it.n+"」ことがありましたか？","家族が困っていなくても、対応していなくても、あれば「はい」。","s1",1],
+                           ["それは昔からの性格やくせで、その場では不自然ではないものですか？","例：昔から涙もろい、もともと声が大きい → はい",1,"s2"],
+                           ["週に1回以上ありますか？","",3,"s3"],
+                           ["月に1回以上ありますか？","",2,1]];
+  if(it.ch==="YN" && YNQ[it.c]) return [[YNQ[it.c][0],YNQ[it.c][1]+" 当日と、ふだんの様子がちがうときは、多いほうで答えます。",1,2]];
+  if(it.ch==="EN") return [["むせたりせずに、飲み込めていますか？","とろみ食・きざみ食でむせずに飲めれば「はい」。",1,"s1"],
+                           ["管（胃ろう・点滴など）でしか栄養をとれず、口からはまったく飲み込めませんか？","「いいえ」なら、できる・できないのどちらとも言えない状態です。",3,2]];
+  return null;
+}
+const EASY_HINT = {
+ "1-1":"腕を前と横に、肩の高さまで上げてもらいます。足は、座ってひざを伸ばし、水平まで上げてもらいます。できなかった手足を選びます（全部できたら「ない」）。前か横のどちらか一方でもできなければ選びます。",
+ "1-2":"本人の同意を得て、調査員が肩・股・膝をゆっくり動かします。動く範囲がせまかった関節を選びます（全部動けば「ない」）。自分で動かせないだけで、人が動かせば動くなら「ない」です。",
+ "2-12":"この1か月に、30分以上、家の敷地の外に出た回数です。通院・デイサービス・買い物など、目的や付き添いは問いません。",
+ "M":"この2週間に、医師や看護師から受けている処置を選びます。家族やヘルパーがする処置はふくみません。続いているものだけです（一時的な治療・終わったものはふくみません）。",
+ "J1":"移動の様子で選びます。調査時の様子と、ふだんの様子から判断します。",
+ "J2":"認知症の症状や行動と、まわりの手助けの必要さで選びます。"
+};
+function tokAdvice(it, r){
+  const why=[];
+  if(it.kind==="bpsd" && r.v>=2) why.push("行動があるので、家族がどう対応しているか（していなければ、そのこと）");
+  if(r.freqUsed) why.push("日によって違うので、少ないほうの様子と回数");
+  if(r.inapp) why.push("今の介助が合っていないと考えた理由と事実");
+  if(r.trial==="no") why.push("動作をしてもらえなかった理由と、ふだんの様子");
+  if(r.trial==="diff") why.push("調査時とふだんの様子の違い");
+  if(it.c==="3-1"||it.c==="5-3") why.push("調査時の様子と、ふだんの様子");
+  if((it.c==="1-1"&&(r.v||[]).includes(5))||(it.c==="1-2"&&(r.v||[]).includes(4))) why.push("「その他」の場所（どこか）");
+  if(it.ax==="K" && r.v>=2 && !why.length) why.push("だれが、何を、どのくらい手伝っているか");
+  return why;
+}
+let WSTEP=null, EZDIFF=false;
+
+function renderEasySheet(){
+  const it=BYC[OPEN]; const r=rec(OPEN); const cs=choicesOf(it); const idx=ALL.findIndex(x=>x.c===OPEN);
+  const flow=flowOf(it);
+  const s=document.createElement("div"); s.className="sheet"; s.setAttribute("role","dialog"); s.setAttribute("aria-label",it.n);
+  let main="";
+  if(flow && (WSTEP || r.v==null)){
+    const si = WSTEP? +WSTEP.slice(1) : 0; const st=flow[si];
+    main = `<div class="wiz"><div class="wq">${esc(st[0])}</div>${st[1]?`<p class="note">${esc(st[1])}</p>`:""}
+      <div class="yn"><button class="btn yes" data-yn="yes">はい</button><button class="btn o no" data-yn="no">いいえ</button></div>
+      ${si>0?`<button class="linkb" data-act="wizback">← ひとつ前の質問へ</button>`:""}
+      <p class="note">どうしても分からないときは、下の「選択肢から直接えらぶ」を使えます。</p></div>
+      <details class="direct"><summary>選択肢から直接えらぶ</summary><div class="choices">${cs.map((x,i)=>`<button data-ch="${i}" aria-pressed="${r.v===i+1}"><span class="no">${i+1}</span><span>${esc(x)}</span></button>`).join("")}</div></details>`;
+  } else if(flow){
+    main = `<div class="result"><div class="rl">答えから決まった選択肢</div><div class="rv">${r.v}. ${esc(cs[r.v-1])}</div>
+      <button class="linkb" data-act="wizreset">質問をやり直す</button></div>`;
+  } else if(it.kind==="med"){
+    main = `<p class="hint">${esc(EASY_HINT.M)}</p>`+medHTML(r);
+  } else if(it.c==="2-12"){
+    main = `<p class="hint">${esc(EASY_HINT["2-12"])}</p><label class="f" for="gaN">回数（1か月）</label><input type="number" inputmode="numeric" min="0" id="gaN" value="${r.ga??""}">
+      <div class="acts"><button class="btn" data-act="gai">この回数で決める</button></div>
+      ${r.v?`<div class="result"><div class="rl">決まった選択肢</div><div class="rv">${r.v}. ${esc(cs[r.v-1])}</div></div>`:""}`;
+  } else {
+    const plain=PLAIN[it.ch];
+    main = `${EASY_HINT[it.c]?`<p class="hint">${esc(EASY_HINT[it.c])}</p>`:`<p class="hint">いちばん近いものを選んでください。</p>`}
+      <div class="choices">${cs.map((x,i)=>{ const on = isMulti(it) ? (r.v||[]).includes(i) : r.v===i+1; return `<button data-ch="${i}" aria-pressed="${on}"><span class="no">${i+1}</span><span>${esc(plain?plain[i]:x)}${plain?`<span class="sub">${esc(x)}</span>`:""}</span></button>`;}).join("")}</div>`;
+  }
+  const qs=QS[it.c]||[];
+  const adv=tokAdvice(it,r);
+  const answered = done(it,r);
+  const rec2 = answered ? `<div class="card ez">
+     <h3 style="margin-top:0">調査票に書く文章（特記事項）</h3>
+     ${adv.length?`<div class="warnbox"><b>書いておくのがおすすめです。</b><br>${adv.map(esc).join("<br>")}</div>`:`<p class="note">特に書くことがなければ、空のままでかまいません。手伝いや困りごとがあれば書いておくと、審査会に伝わります。</p>`}
+     <label class="f" for="ezS">どんな様子？</label><input type="text" id="ezS" value="${esc(r.s||"")}" placeholder="例：夜だけポータブルトイレを使っている">
+     <label class="f" for="ezF">どのくらい？（数で）</label><input type="text" id="ezF" value="${esc(r.f||"")}" placeholder="例：1日2回／週3回">
+     <label class="f" for="ezC">だれが、何を手伝っている？</label><input type="text" id="ezC" value="${esc(r.care||"")}" placeholder="例：夫が体を支えている（なければ空でOK）">
+     <div class="acts"><button class="btn o" data-act="eztok">文章にする</button></div>
+     ${r.tok?`<label class="f" for="tok">できた文章（直してもOK）</label><textarea id="tok">${esc(r.tok)}</textarea>${vagueIn(r.tok).length?`<div class="warnbox">「${vagueIn(r.tok).join("・")}」ではなく、「週2回」のように数で書きましょう。</div>`:""}`:""}
+   </div>` : "";
+  s.innerHTML = `<div class="sbar"><button class="ghost" data-act="close">← 一覧へ</button><span class="sp">${idx+1} / ${ALL.length}</span></div>
+   <div class="sscroll"><div class="sin">
+     <div class="ihead"><div class="ic">${it.c.startsWith("J")||it.c==="M"?"":esc(it.c)+"　"}${it.ax==="U"&&it.kind==="bpsd"?"この1か月の様子で答えます":it.c==="M"?"この2週間の様子で答えます":"ふだんの様子（この1週間）で答えます"}</div><h2>${esc(it.n)}</h2></div>
+     ${main}
+     ${qs.length?`<details class="ask"><summary>聞き方の例</summary><div class="bd"><p class="q">${esc(qs[0])}</p>${qs[1]?`<p class="note">${esc(qs[1])}</p>`:""}</div></details>`:""}
+     ${flow&&it.ax!=="U"?`<div class="chk" style="margin-top:8px"><input type="checkbox" id="ezDiff" ${r.freqUsed?"checked":""}><label for="ezDiff">日によって違う（多いほうの様子で答えました）</label></div>`:""}
+     ${rec2}
+   </div></div>
+   <div class="sfoot"><button class="btn o" data-act="prev" ${idx<=0?"disabled":""}>← 前へ</button><button class="btn" data-act="next" ${idx>=ALL.length-1?"disabled":""}>${answered?"次へ →":"とばして次へ →"}</button></div>`;
+  document.body.appendChild(s);
+  bindSheet(s, it);
+}
+function buildDraft(it, r){
+  const cs=choicesOf(it);
+  const selT = it.kind==="med" ? "" : isMulti(it) ? (r.v||[]).map(i=>`「${i+1}.${cs[i]}」`).join("") : (r.v?`「${r.v}.${cs[r.v-1]}」`:"「（未選択）」");
+  let t=`（${it.c.startsWith("J")?it.n:it.c==="M"?"特別な医療":it.c}）`;
+  if(r.s) t+=r.s.replace(/[。．]?$/,"。");
+  if(r.f) t+=`頻度：${r.f.replace(/[。．]$/,"")}。`;
+  if(selT) t+=`${r.why||""}${selT}を選択する。`;
+  if(r.care) t+=r.care.replace(/[。．]?$/,"。");
+  else if(it.kind==="bpsd" && r.v>=2) t+="家族は特に対応していない。";
+  return t;
+}
+function firstUnanswered(){ const c=cur(); if(!c) return ALL[0]; return ALL.find(it=>!done(it,c.r[it.c]||{})) || null; }
+function easyHome(){
+  const c=cur(); const n=c?ALL.filter(it=>done(it,c.r[it.c]||{})).length:0; const nx=firstUnanswered();
+  return `<div class="card guide">
+    <h2 style="margin-top:0">使い方</h2>
+    <ol class="steps"><li><b>「はじめる」</b>を押して、質問に<b>はい／いいえ</b>で答えます。答えると選択肢が自動で決まります。</li>
+    <li>全部答えたら、下の<b>「見直し」</b>で書き忘れを確認します。</li>
+    <li><b>「まとめ」</b>で文章をコピーして、調査票に写します。</li></ol>
+    ${nx?`<button class="btn big" data-open="${nx.c}">${n?`続きから（${esc(nx.n)}）`:"はじめる"}</button>`:`<div class="res">全部の項目に答えました。「見直し」で確認しましょう。</div>`}
+  </div>`;
+}
+
 function renderSheet(){
   const old=$(".sheet"); if(old) old.remove();
   if(!OPEN) return;
+  if(DB.mode!=="detail"){ renderEasySheet(); return; }
   const it=BYC[OPEN]; const r=rec(OPEN); const cs=choicesOf(it);
   const idx=ALL.findIndex(x=>x.c===OPEN);
   const s=document.createElement("div"); s.className="sheet"; s.setAttribute("role","dialog"); s.setAttribute("aria-label",it.n);
@@ -659,7 +827,10 @@ function renderPrep(){
   const c=cur();
   const pre=(c&&c.pre)||{};
   const P=[["p1","日時：本人・介護者と調整し、介護者がいない日を避けた〔P7〕"],["p2","本人が通常の状態か確認した（急病・高熱なら日を改める）〔P6〕"],["p3","場所：日頃の状況が分かる場所。施設・病院は普段過ごす場所で、プライバシーに配慮〔P7〕"],["p4","持ち物：身分を証する物（調査員証等）〔P7〕"],["p5","持ち物：視力確認表。短期記憶の3品テスト用にペンと時計〔P7・P105〕"],["p6","立ち会い：日頃の状況を知る家族・職員に依頼した（特別な医療は家族等の同席が望ましい）〔P7・P147〕"],["p7","調査の目的を説明する。専門用語を使わず、項目の順番にこだわらない〔P7〕"]];
-  let h=`<h2>調査前チェック</h2>${c?`<div class="card">${P.map(([k,l])=>`<div class="chk"><input type="checkbox" id="${k}" data-pre="${k}" ${pre[k]?"checked":""}><label for="${k}">${l}</label></div>`).join("")}</div>`:""}
+  let h=`<h2>表示モード</h2><div class="card"><div class="choices" style="margin-top:0">
+    <button data-mode="easy" aria-pressed="${DB.mode!=="detail"}"><span class="no">1</span><span>かんたんモード<span class="sub">はい／いいえで答えると選択肢が決まる。はじめての人向け</span></span></button>
+    <button data-mode="detail" aria-pressed="${DB.mode==="detail"}"><span class="no">2</span><span>くわしいモード<span class="sub">定義・注意点・判断の道具・定型文をすべて使える。慣れた人向け</span></span></button></div></div>
+  <h2>調査前チェック</h2>${c?`<div class="card">${P.map(([k,l])=>`<div class="chk"><input type="checkbox" id="${k}" data-pre="${k}" ${pre[k]?"checked":""}><label for="${k}">${l}</label></div>`).join("")}</div>`:""}
   <h2>調査の管理</h2>
   <div class="pin">氏名・住所・電話番号は入れないでください。調査は番号（例：A-001）で管理します。データはこの端末のブラウザの中だけに保存され、外部には送信されません。</div>
   <div class="card"><label class="f" for="newId">新しい調査の番号</label><input type="text" id="newId" placeholder="例：A-001" autocomplete="off">
@@ -706,7 +877,17 @@ function bindSheet(s, it){
   s.addEventListener("click", e=>{
     if(e.target.classList && e.target.classList.contains("pop")){ POP=null; POPMSG=""; refreshSheet(); return; }
     const b=e.target.closest("button"); if(!b) return;
+    if(b.dataset.yn){
+      const fl=flowOf(it); const si=WSTEP?+WSTEP.slice(1):0; const tg=fl[si][b.dataset.yn==="yes"?2:3];
+      if(typeof tg==="number"){ WSTEP=null; WHIST=[]; sel(tg); refreshSheet(); toast(`「${tg}. ${choicesOf(it)[tg-1]}」に決まりました`); }
+      else { WHIST.push(WSTEP||"s0"); WSTEP=tg; refreshSheet(); }
+      return;
+    }
+    if(b.dataset.act==="wizback"){ WSTEP=WHIST.pop()||"s0"; refreshSheet(); return; }
+    if(b.dataset.act==="wizreset"){ WSTEP="s0"; WHIST=[]; refreshSheet(); return; }
+    if(b.dataset.act==="eztok"){ readEz(s,r); r.tok=buildDraft(it,r); save(); renderHeader(); refreshSheet(); toast("文章にしました。直したいところは書き換えてください"); return; }
     if(b.dataset.ch!=null){
+      WSTEP=null; WHIST=[];
       const i=+b.dataset.ch;
       if(isMulti(it)){ let v=r.v||[]; if(i===0) v=[0]; else { v=v.filter(x=>x!==0); v=v.includes(i)?v.filter(x=>x!==i):v.concat(i).sort((a,b)=>a-b); } sel(v); }
       else sel(i+1);
@@ -726,8 +907,8 @@ function bindSheet(s, it){
     const a=b.dataset.act;
     if(a==="popclose"){ POP=null; POPMSG=""; refreshSheet(); return; }
     if(a==="more"){ MORE=!MORE; refreshSheet(); return; }
-    if(a==="close"){ OPEN=null; POP=null; CARET=null; render(); return; }
-    if(a==="prev"||a==="next"){ const i=ALL.findIndex(x=>x.c===it.c); const n=ALL[i+(a==="next"?1:-1)]; if(n){ OPEN=n.c; GF=n.g; POP=null; CARET=null; MORE=false; render(); const sc=$(".sheet .sscroll"); if(sc) sc.scrollTop=0; } return; }
+    if(a==="close"){ OPEN=null; POP=null; CARET=null; WSTEP=null; WHIST=[]; render(); return; }
+    if(a==="prev"||a==="next"){ const i=ALL.findIndex(x=>x.c===it.c); const n=ALL[i+(a==="next"?1:-1)]; if(n){ OPEN=n.c; GF=n.g; POP=null; CARET=null; MORE=false; WSTEP=null; WHIST=[]; render(); const sc=$(".sheet .sscroll"); if(sc) sc.scrollTop=0; } return; }
     if(a==="freq"){
       const cs=choicesOf(it); const f={}; let tot=0;
       s.querySelectorAll("[data-fq]").forEach(x=>{ const n=parseInt(x.value,10); if(!isNaN(n)&&n>0){ f[x.dataset.fq]=n; tot+=n; } });
@@ -771,6 +952,7 @@ function bindSheet(s, it){
   s.addEventListener("input", e=>{
     const x=e.target;
     if(x.id==="memo"){ r.memo=x.value; save(); return; }
+    if(["ezS","ezF","ezC"].includes(x.id)){ readEz(s,r); save(); return; }
     if(x.id==="tok"){ r.tok=x.value; save(); renderHeader(); return; }
     if(["tkS","tkC","tkF","tkR"].includes(x.id)){ readDraft(s,r); save(); return; }
     if(x.dataset.md!=null){ const i=x.dataset.md; r.det=r.det||{}; r.det[i]=r.det[i]||{}; r.det[i][x.dataset.k]=x.value; save(); renderHeader(); return; }
@@ -778,12 +960,15 @@ function bindSheet(s, it){
   s.addEventListener("change", e=>{
     const x=e.target;
     if(x.dataset.ia!=null){ const ia=[]; s.querySelectorAll("[data-ia]").forEach(c=>{ if(c.checked) ia.push(+c.dataset.ia); }); r.ia=ia; r.inapp=ia.length>0; if(r.inapp) r.why="不適切な状況にあると判断し、適切な介助の方法として"; save(); renderHeader(); return; }
+    if(x.id==="ezDiff"){ r.freqUsed=x.checked; if(x.checked) r.why="より頻回な状況から"; else if(r.why==="より頻回な状況から") r.why=""; save(); renderHeader(); refreshSheet(); return; }
     if(x.id==="medNone"){ r.medDone=x.checked; if(x.checked) r.v=[]; save(); renderHeader(); refreshSheet(); return; }
     if(x.id==="tok"){ refreshSheet(); }
   });
 }
 let CARET=null; /* 特記事項欄で最後にカーソルがあった位置（未操作なら末尾に追加） */
 ["keyup","click","select","input"].forEach(ev=>document.addEventListener(ev, e=>{ if(e.target && e.target.id==="tok") CARET=e.target.selectionStart; }));
+let WHIST=[];
+function readEz(s,r){ const g=id=>{const e=s.querySelector("#"+id); return e?e.value:undefined;}; r.s=g("ezS")??r.s; r.f=g("ezF")??r.f; r.care=g("ezC")??r.care; }
 function readDraft(s,r){ const g=id=>{const e=s.querySelector("#"+id); return e?e.value:undefined;}; r.s=g("tkS")??r.s; r.care=g("tkC")??r.care; r.f=g("tkF")??r.f; r.why=g("tkR")??r.why; }
 function refreshSheet(){
   const sc=$(".sheet .sscroll"), y=sc?sc.scrollTop:0;
@@ -800,6 +985,7 @@ document.addEventListener("click", e=>{
   if(b.dataset.tab){ TAB=b.dataset.tab; OPEN=null; render(); window.scrollTo(0,0); try{localStorage.setItem(KEY+".tab",TAB);}catch(e){} return; }
   if(b.dataset.gf){ GF=b.dataset.gf; render(); return; }
   if(b.dataset.open){ OPEN=b.dataset.open; GF=BYC[OPEN].g; render(); return; }
+  if(b.dataset.mode){ DB.mode=b.dataset.mode; save(); render(); toast(DB.mode==="detail"?"くわしいモードにしました":"かんたんモードにしました"); return; }
   if(b.dataset.tpldel){ DB.tpl=(DB.tpl||[]).filter(t=>t.id!==b.dataset.tpldel); save(); render(); toast("削除しました"); return; }
   const a=b.dataset.act;
   if(a==="tplAddP"){ const t=$("#tplNewP").value.trim(); if(!t){ toast("登録する文を入れてください"); return; } DB.tpl=DB.tpl||[]; DB.tpl.push({id:"u"+Date.now(), code:$("#tplCodeP").value, text:t}); save(); render(); toast("定型文を登録しました"); return; }
@@ -840,6 +1026,7 @@ function importText(t){
 /* ===== 起動 ===== */
 load();
 ensureTpl();
+if(!DB.mode) DB.mode="easy";
 if(!DB.cases.length){ DB.cases=[sampleCase()]; DB.cur="例-001"; }
 if(!DB.cur && DB.cases[0]) DB.cur=DB.cases[0].id;
 try{ const t=localStorage.getItem(KEY+".tab"); if(t) TAB=t; }catch(e){}
